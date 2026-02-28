@@ -1,0 +1,21 @@
+node_modules/
+.env
+.DS_Store
+dist/
+build/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.env
+.pytest_cache/
+
+# OS files
+Thumbs.db
+db.sqlite3

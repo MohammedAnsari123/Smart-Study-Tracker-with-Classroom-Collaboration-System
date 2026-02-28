@@ -1,0 +1,151 @@
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import axios from 'axios';
+import TopBar from '../components/TopBar';
+import { AuthContext } from '../context/AuthContext';
+import { Sparkles, Send, Bot, User, Trash2, Loader2, Info } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
+const ChatbotView = () => {
+    const { user } = useContext(AuthContext);
+    const [messages, setMessages] = useState([
+        { role: 'assistant', content: `Hello ${user?.fullName || 'there'}! I'm your Smart Study Assistant. How can I help you with your studies today?` }
+    ]);
+    const [input, setInput] = useState('');
+    const [loading, setLoading] = useState(false);
+    const messagesEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const handleSendMessage = async (e) => {
+        e.preventDefault();
+        if (!input.trim() || loading) return;
+
+        const userMsg = { role: 'user', content: input };
+        setMessages(prev => [...prev, userMsg]);
+        setInput('');
+        setLoading(true);
+
+        try {
+            // Updated to point to the Python FastAPI service on Port 8000
+            const res = await axios.post('http://localhost:8000/api/chat', {
+                message: input,
+                history: messages.slice(-5) // Send last few messages for context
+            });
+
+            setMessages(prev => [...prev, { role: 'assistant', content: res.data.response }]);
+        } catch (error) {
+            console.error('Chatbot error:', error);
+            setMessages(prev => [...prev, {
+                role: 'assistant',
+                content: "I'm having trouble connecting to my brain right now. Please ensure the local AI service is running."
+            }]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const clearChat = () => {
+        setMessages([{ role: 'assistant', content: "Chat cleared. What study topic should we explore next?" }]);
+    };
+
+    return (
+        <div className="min-h-screen bg-gray-50 dark:bg-darkBg flex flex-col">
+            <TopBar />
+
+            <div className="flex-1 max-w-4xl mx-auto w-full p-4 md:p-8 flex flex-col overflow-hidden">
+                <div className="mb-6 flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-black text-gray-900 dark:text-white flex items-center">
+                            <Sparkles className="w-8 h-8 mr-3 text-primary-500 animate-pulse" />
+                            AI Study Assistant
+                        </h1>
+                        <p className="text-gray-500 dark:text-gray-400 mt-1 flex items-center">
+                            <Info className="w-4 h-4 mr-1" />
+                            Specialized in providing study information and explaining concepts.
+                        </p>
+                    </div>
+                    <button
+                        onClick={clearChat}
+                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                        title="Clear Chat"
+                    >
+                        <Trash2 className="w-5 h-5" />
+                    </button>
+                </div>
+
+                {/* Chat Container */}
+                <div className="flex-1 bg-white dark:bg-darkCard rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden glassmorphism">
+                    <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700">
+                        {messages.map((msg, idx) => (
+                            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                                <div className={`flex max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'} gap-3`}>
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${msg.role === 'user'
+                                        ? 'bg-primary-600 text-white'
+                                        : 'bg-gray-100 dark:bg-slate-800 text-primary-500'
+                                        }`}>
+                                        {msg.role === 'user' ? <User className="w-5 h-5" /> : <Bot className="w-6 h-6" />}
+                                    </div>
+                                    <div className={`p-4 rounded-2xl text-sm font-medium leading-relaxed markdown-content ${msg.role === 'user'
+                                        ? 'bg-primary-600 text-white rounded-tr-none shadow-md shadow-primary-500/20'
+                                        : 'bg-gray-50 dark:bg-slate-800/50 text-gray-800 dark:text-gray-200 rounded-tl-none border border-gray-100 dark:border-gray-700'
+                                        }`}>
+                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                            {msg.content}
+                                        </ReactMarkdown>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                        {loading && (
+                            <div className="flex justify-start animate-in fade-in duration-300">
+                                <div className="flex gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-slate-800 text-primary-500 flex items-center justify-center">
+                                        <Bot className="w-6 h-6" />
+                                    </div>
+                                    <div className="bg-gray-50 dark:bg-slate-800/50 p-4 rounded-2xl rounded-tl-none border border-gray-100 dark:border-gray-700 flex items-center">
+                                        <Loader2 className="w-5 h-5 text-primary-500 animate-spin mr-2" />
+                                        <span className="text-gray-400 text-sm font-medium italic">Thinking...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* Input Area */}
+                    <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-darkCard/50">
+                        <div className="relative flex items-center">
+                            <input
+                                type="text"
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                placeholder="Ask about any study topic..."
+                                className="w-full bg-white dark:bg-slate-800 border-none rounded-2xl pl-6 pr-14 py-4 text-sm font-bold shadow-sm focus:ring-2 focus:ring-primary-500 dark:text-white transition-all"
+                                disabled={loading}
+                            />
+                            <button
+                                type="submit"
+                                disabled={loading || !input.trim()}
+                                className={`absolute right-2 p-2.5 rounded-xl transition-all ${loading || !input.trim()
+                                    ? 'text-gray-300 cursor-not-allowed'
+                                    : 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg shadow-primary-500/30'
+                                    }`}
+                            >
+                                <Send className="w-5 h-5" />
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default ChatbotView;
