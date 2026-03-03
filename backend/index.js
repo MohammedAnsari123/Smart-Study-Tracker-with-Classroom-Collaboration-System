@@ -15,9 +15,14 @@ app.use('/auth', require('./routes/auth'));
 app.use('/class', require('./routes/class'));
 app.use('/assignment', require('./routes/assignment'));
 app.use('/announcement', require('./routes/announcement'));
-app.use('/study', require('./routes/study'));
 app.use('/subject', require('./routes/subject'));
+app.use('/study', require('./routes/study'));
 app.use('/analytics', require('./routes/analytics'));
+app.use('/flashcards', require('./routes/flashcard'));
+app.use('/api/ai', require('./routes/ai'));
+app.use('/progress', require('./routes/progress'));
+
+
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

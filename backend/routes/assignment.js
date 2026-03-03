@@ -5,7 +5,8 @@ const {
     getClassAssignments,
     submitAssignment,
     gradeSubmission,
-    getAssignmentSubmissions
+    getAssignmentSubmissions,
+    updateAssignmentStatus
 } = require('../controllers/assignmentController');
 const { protect } = require('../middleware/authMiddleware');
 const { requireOwner } = require('../middleware/ownerMiddleware');
@@ -13,6 +14,10 @@ const upload = require('../middleware/uploadMiddleware');
 
 // Create assignment for class
 router.post('/class/:classId/create', protect, requireOwner, upload.single('file'), createAssignment);
+
+// Update assignment status (Kanban)
+router.patch('/:id/status', protect, updateAssignmentStatus);
+
 
 // Get all assignments for a class
 router.get('/class/:classId', protect, getClassAssignments);

@@ -99,4 +99,20 @@ const removeMember = async (req, res) => {
     }
 };
 
-module.exports = { createClassroom, joinClassroom, getUserClassrooms, getClassroomDetails, deleteClassroom, removeMember };
+const getClassMembers = async (req, res) => {
+    try {
+        const members = await ClassMember.find({ classId: req.params.id, membershipStatus: 'active' })
+            .populate('userId', 'fullName email profileImage')
+            .exec();
+
+        // Optionally filter out the owner if you only want students
+        const classroom = await Classroom.findById(req.params.id);
+        const students = members.filter(m => m.userId._id.toString() !== classroom.ownerId.toString());
+
+        res.json(students.map(s => s.userId));
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { createClassroom, joinClassroom, getUserClassrooms, getClassroomDetails, deleteClassroom, removeMember, getClassMembers };

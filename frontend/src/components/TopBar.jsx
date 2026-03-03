@@ -1,12 +1,13 @@
-import React, { useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, Sun, Moon, Settings as SettingsIcon, BookOpen, LayoutDashboard, Users, ListTree, Sparkles } from 'lucide-react';
+import { LogOut, Sun, Moon, Settings as SettingsIcon, BookOpen, LayoutDashboard, Users, ListTree, Sparkles, Brain, Menu, X } from 'lucide-react';
 
 const TopBar = () => {
     const { user, logout } = useContext(AuthContext);
     const { theme, toggleTheme } = useContext(ThemeContext);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -19,7 +20,15 @@ const TopBar = () => {
         <nav className="bg-white dark:bg-darkCard shadow-sm sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
-                    <div className="flex">
+                    <div className="flex items-center">
+                        {user && (
+                            <button
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                className="sm:hidden -ml-2 mr-2 p-2 rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+                            >
+                                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                            </button>
+                        )}
                         <Link to={user ? "/dashboard" : "/"} className="flex-shrink-0 flex items-center group">
                             <BookOpen className="h-8 w-8 text-primary-500 group-hover:text-primary-600 transition-colors" />
                             <span className="ml-2 mt-1 text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-green-400">
@@ -60,6 +69,17 @@ const TopBar = () => {
                                     Curriculum
                                 </Link>
                                 <Link
+                                    to="/flashcards"
+                                    className={`inline-flex items-center px-3 py-2 text-sm font-bold rounded-lg transition-colors ${location.pathname === '/flashcards'
+                                        ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
+                                        : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'
+                                        }`}
+                                >
+                                    <Brain className="w-4 h-4 mr-2" />
+                                    Flashcards
+                                </Link>
+
+                                <Link
                                     to="/chatbot"
                                     className={`inline-flex items-center px-3 py-2 text-sm font-bold rounded-lg transition-colors ${location.pathname === '/chatbot'
                                         ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
@@ -98,6 +118,37 @@ const TopBar = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Mobile Menu */}
+            {user && isMobileMenuOpen && (
+                <div className="sm:hidden border-t border-gray-100 dark:border-gray-800 animate-in slide-in-from-top duration-300">
+                    <div className="px-4 py-4 space-y-2 bg-white dark:bg-darkCard">
+                        {[
+                            { to: '/dashboard', label: 'Tracker', icon: LayoutDashboard },
+                            { to: '/classrooms', label: 'Classrooms', icon: Users },
+                            { to: '/curriculum', label: 'Curriculum', icon: ListTree },
+                            { to: '/flashcards', label: 'Flashcards', icon: Brain },
+                            { to: '/chatbot', label: 'AI Assistant', icon: Sparkles, color: 'text-primary-500' }
+                        ].map((link) => {
+                            const Icon = link.icon;
+                            return (
+                                <Link
+                                    key={link.to}
+                                    to={link.to}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className={`flex items-center px-4 py-3 rounded-2xl text-sm font-bold transition-all ${location.pathname === link.to
+                                        ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
+                                        : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-slate-800/50'
+                                        }`}
+                                >
+                                    <Icon className={`w-5 h-5 mr-3 ${link.color || ''}`} />
+                                    {link.label}
+                                </Link>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
         </nav>
     );
 };

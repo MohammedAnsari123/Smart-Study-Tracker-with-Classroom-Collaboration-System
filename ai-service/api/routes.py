@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from api.models import ChatRequest
+from api.models import ChatRequest, WeaknessRequest, FlashcardRequest
 from services.ai_service import ai_service
 
 router = APIRouter()
@@ -12,9 +12,29 @@ async def chat(request: ChatRequest):
         
         response = await ai_service.get_ai_response(
             user_message=request.message,
-            history=history_dicts
+            history=history_dicts,
+            context=request.context
         )
+
         
         return {"response": response}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/weakness-analysis")
+async def weakness_analysis(request: WeaknessRequest):
+    try:
+        result = await ai_service.get_weakness_analysis(request.data.dict())
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/generate-flashcards")
+async def generate_flashcards(request: FlashcardRequest):
+    try:
+        cards = await ai_service.generate_flashcards(request.subject, request.topics)
+        return {"flashcards": cards}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+

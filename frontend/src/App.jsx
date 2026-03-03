@@ -10,6 +10,8 @@ import LandingPage from './pages/LandingPage';
 import Classrooms from './pages/Classrooms';
 import SubjectManagement from './pages/SubjectManagement';
 import ChatbotView from './pages/ChatbotView';
+import Flashcards from './pages/Flashcards';
+
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -31,7 +33,9 @@ function App() {
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/classrooms" element={<PrivateRoute><Classrooms /></PrivateRoute>} />
           <Route path="/curriculum" element={<PrivateRoute><SubjectManagement /></PrivateRoute>} />
+          <Route path="/flashcards" element={<PrivateRoute><Flashcards /></PrivateRoute>} />
           <Route path="/chatbot" element={<PrivateRoute><ChatbotView /></PrivateRoute>} />
+
           <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
           <Route path="/class/:id" element={<PrivateRoute><ClassroomView /></PrivateRoute>} />
         </Routes>

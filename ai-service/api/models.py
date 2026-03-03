@@ -8,3 +8,21 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     history: Optional[List[ChatMessage]] = []
+    context: Optional[str] = ""
+
+
+class StudyData(BaseModel):
+    subject: Optional[str] = None
+    thresholdMet: Optional[bool] = True
+    sessions: List[dict]
+    flashcards: List[dict]
+    submissions: List[dict]
+
+class WeaknessRequest(BaseModel):
+    data: StudyData
+
+class FlashcardRequest(BaseModel):
+    subject: str
+    topics: List[str]
+
+

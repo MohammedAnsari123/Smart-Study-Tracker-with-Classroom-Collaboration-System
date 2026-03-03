@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import axios from 'axios';
 import TopBar from '../components/TopBar';
 import { AuthContext } from '../context/AuthContext';
-import { Sparkles, Send, Bot, User, Trash2, Loader2, Info } from 'lucide-react';
+import { Sparkles, Send, Bot, User, Trash2, Loader2, Info, FileText, X, Paperclip } from 'lucide-react';
+
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -13,7 +14,12 @@ const ChatbotView = () => {
     ]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
+    const [pdfContext, setPdfContext] = useState('');
+    const [pdfName, setPdfName] = useState('');
+    const [uploading, setUploading] = useState(false);
     const messagesEndRef = useRef(null);
+    const fileInputRef = useRef(null);
+
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,11 +42,13 @@ const ChatbotView = () => {
             // Updated to point to the Python FastAPI service on Port 8000
             const res = await axios.post('http://localhost:8000/api/chat', {
                 message: input,
-                history: messages.slice(-5) // Send last few messages for context
+                history: messages.slice(-5), // Send last few messages for context
+                context: pdfContext
             });
 
             setMessages(prev => [...prev, { role: 'assistant', content: res.data.response }]);
         } catch (error) {
+
             console.error('Chatbot error:', error);
             setMessages(prev => [...prev, {
                 role: 'assistant',
@@ -53,7 +61,45 @@ const ChatbotView = () => {
 
     const clearChat = () => {
         setMessages([{ role: 'assistant', content: "Chat cleared. What study topic should we explore next?" }]);
+        setPdfContext('');
+        setPdfName('');
     };
+
+    const handleFileUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file || file.type !== 'application/pdf') {
+            alert('Please upload a valid PDF file.');
+            return;
+        }
+
+        setUploading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.post('http://localhost:5000/api/ai/extract-pdf', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            setPdfContext(res.data.text);
+            setPdfName(file.name);
+            setMessages(prev => [...prev, {
+                role: 'assistant',
+                content: `📖 I've processed **${file.name}**. You can now ask me questions specifically about the contents of this document!`
+            }]);
+        } catch (error) {
+            console.error('PDF Upload Error:', error);
+            alert('Failed to process PDF. Please try again.');
+        } finally {
+            setUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+    };
+
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-darkBg flex flex-col">
@@ -121,27 +167,65 @@ const ChatbotView = () => {
 
                     {/* Input Area */}
                     <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-darkCard/50">
-                        <div className="relative flex items-center">
+                        {pdfName && (
+                            <div className="mb-3 flex items-center justify-between bg-primary-50 dark:bg-primary-900/20 px-4 py-2 rounded-xl border border-primary-100 dark:border-primary-800 animate-in fade-in slide-in-from-bottom-1">
+                                <div className="flex items-center text-primary-700 dark:text-primary-300">
+                                    <FileText className="w-4 h-4 mr-2" />
+                                    <span className="text-xs font-bold truncate max-w-[200px]">{pdfName}</span>
+                                    <span className="ml-2 text-[10px] font-medium opacity-70">(Active Context)</span>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => { setPdfContext(''); setPdfName(''); }}
+                                    className="text-primary-500 hover:text-red-500 transition-colors"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                        )}
+                        <div className="relative flex items-center gap-2">
                             <input
-                                type="text"
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                placeholder="Ask about any study topic..."
-                                className="w-full bg-white dark:bg-slate-800 border-none rounded-2xl pl-6 pr-14 py-4 text-sm font-bold shadow-sm focus:ring-2 focus:ring-primary-500 dark:text-white transition-all"
-                                disabled={loading}
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleFileUpload}
+                                accept=".pdf"
+                                className="hidden"
                             />
                             <button
-                                type="submit"
-                                disabled={loading || !input.trim()}
-                                className={`absolute right-2 p-2.5 rounded-xl transition-all ${loading || !input.trim()
-                                    ? 'text-gray-300 cursor-not-allowed'
-                                    : 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg shadow-primary-500/30'
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={uploading || loading}
+                                className={`p-3 rounded-xl transition-all border ${uploading
+                                    ? 'bg-gray-100 border-gray-200 text-gray-400 animate-pulse'
+                                    : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700'
                                     }`}
+                                title="Upload PDF for context"
                             >
-                                <Send className="w-5 h-5" />
+                                {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Paperclip className="w-5 h-5 rotate-45" />}
                             </button>
+                            <div className="relative flex-1">
+                                <input
+                                    type="text"
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    placeholder={pdfName ? "Ask about the PDF..." : "Ask about any study topic..."}
+                                    className="w-full bg-white dark:bg-slate-800 border-none rounded-2xl pl-6 pr-14 py-4 text-sm font-bold shadow-sm focus:ring-2 focus:ring-primary-500 dark:text-white transition-all"
+                                    disabled={loading || uploading}
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={loading || !input.trim() || uploading}
+                                    className={`absolute right-2 top-1.5 p-2.5 rounded-xl transition-all ${loading || !input.trim() || uploading
+                                        ? 'text-gray-300 cursor-not-allowed'
+                                        : 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg shadow-primary-500/30'
+                                        }`}
+                                >
+                                    <Send className="w-5 h-5" />
+                                </button>
+                            </div>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>

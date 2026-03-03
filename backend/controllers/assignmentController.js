@@ -1,27 +1,18 @@
 const Assignment = require('../models/Assignment');
 const Submission = require('../models/Submission');
 const ClassMember = require('../models/ClassMember');
-const cloudinary = require('../config/cloudinary');
+const { uploadToCloudinary } = require('../utils/cloudinaryHelper');
 
-const uploadToCloudinary = (buffer) => {
-    return new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-            { resource_type: 'raw', format: 'pdf' },
-            (error, result) => {
-                if (error) reject(error);
-                else resolve(result);
-            }
-        );
-        uploadStream.end(buffer);
-    });
-};
+// Removed local uploadToCloudinary, using helper instead
 
 const createAssignment = async (req, res) => {
     const { title, description, maxMarks, deadline } = req.body;
     const classId = req.params.classId;
 
     try {
-        if (!req.file) return res.status(400).json({ message: 'PDF file is required' });
+        if (!req.file) {
+            return res.status(400).json({ message: 'PDF file is required' });
+        }
 
         const result = await uploadToCloudinary(req.file.buffer);
 
@@ -134,10 +125,29 @@ const getAssignmentSubmissions = async (req, res) => {
     }
 };
 
+const updateAssignmentStatus = async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    try {
+        const assignment = await Assignment.findById(id);
+        if (!assignment) return res.status(404).json({ message: 'Assignment not found' });
+
+        assignment.status = status;
+        await assignment.save();
+
+        res.json(assignment);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createAssignment,
     getClassAssignments,
     submitAssignment,
     gradeSubmission,
-    getAssignmentSubmissions
+    getAssignmentSubmissions,
+    updateAssignmentStatus
 };
+

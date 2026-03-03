@@ -1,19 +1,8 @@
 const Announcement = require('../models/Announcement');
 const ClassMember = require('../models/ClassMember');
-const cloudinary = require('../config/cloudinary');
+const { uploadToCloudinary } = require('../utils/cloudinaryHelper');
 
-const uploadToCloudinary = (buffer) => {
-    return new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-            { resource_type: 'auto' }, // Allow images or pdfs
-            (error, result) => {
-                if (error) reject(error);
-                else resolve(result);
-            }
-        );
-        uploadStream.end(buffer);
-    });
-};
+// Removed local uploadToCloudinary, using helper instead
 
 const createAnnouncement = async (req, res) => {
     const { message } = req.body;
