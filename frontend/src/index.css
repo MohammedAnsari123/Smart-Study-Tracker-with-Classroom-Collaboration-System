@@ -29,16 +29,42 @@
   @apply font-bold text-primary-600 dark:text-primary-500;
 }
 
-.markdown-content code {
-  @apply bg-gray-200 dark:bg-slate-700 px-1 rounded font-mono text-xs;
+/* Inline code (NOT inside a pre block) */
+.markdown-content :not(pre)>code {
+  @apply bg-gray-200 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs;
+  color: #e06c75;
 }
 
+/* Code blocks (pre > code) */
 .markdown-content pre {
-  @apply bg-gray-900 text-gray-100 p-3 rounded-xl overflow-x-auto my-3 font-mono text-xs;
+  @apply bg-gray-900 text-gray-100 p-4 rounded-xl my-3 font-mono text-xs leading-relaxed;
+  overflow-x: auto;
+  max-width: 100%;
+  white-space: pre;
+  word-wrap: normal;
+}
+
+.markdown-content pre code {
+  @apply bg-transparent p-0 rounded-none text-xs;
+  color: #abb2bf;
+  white-space: pre;
+  word-wrap: normal;
 }
 
 .markdown-content h1,
 .markdown-content h2,
 .markdown-content h3 {
   @apply font-bold mt-4 mb-2;
+}
+
+.markdown-content h1 {
+  @apply text-lg;
+}
+
+.markdown-content h2 {
+  @apply text-base;
+}
+
+.markdown-content h3 {
+  @apply text-sm;
 }

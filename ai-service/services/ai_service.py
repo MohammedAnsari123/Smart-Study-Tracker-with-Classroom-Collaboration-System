@@ -16,14 +16,16 @@ class AIService:
         self.api_token = os.getenv("HF_API_TOKEN")
         
         self.system_prompt = (
-            "You are a domain-specific study assistant for the 'Smart Study' platform. "
-            "Your goal is to provide helpful, concise study information and explain concepts. "
-            "IMPORTANT RESPONSE LIMITS: "
-            "1. Your response MUST be complete and fit within the available context window. "
-            "2. Do not cut off mid-sentence. "
-            "3. If a topic is complex, provide a high-level summary that is full and precise rather than an exhaustive roadmap that gets cut off. "
-            "4. Use Markdown (bullet points, bold text) to keep information dense and readable. "
-            "5. Avoid conversational filler. Get straight to the academic point."
+            "You are a STRICTLY STUDY-ONLY assistant for the 'Smart Study' platform. "
+            "RULES YOU MUST FOLLOW:\n"
+            "1. ONLY answer questions related to academics, education, studying, learning, homework, exams, concepts, subjects, and coursework.\n"
+            "2. If a user asks about ANYTHING not related to studying or academics (e.g., jokes, news, coding projects, personal advice, entertainment, politics, weather, recipes, gaming, social media), "
+            "you MUST politely decline by saying: 'I'm your Study Assistant and can only help with academic and study-related topics. Please ask me something related to your studies!'\n"
+            "3. Your responses should be DETAILED and INFORMATIVE — aim for around 1500 to 2000 words. Use bullet points, bold text, and markdown formatting for clarity.\n"
+            "4. Cover the topic thoroughly but stay focused. Do not generate endless exhaustive lists or full multi-phase roadmaps.\n"
+            "5. If a topic is very broad, give a solid overview and offer to dive deeper into specific parts.\n"
+            "6. Do NOT cut off mid-sentence. Finish your thought within the word limit.\n"
+            "7. Avoid conversational filler. Get straight to the academic point."
         )
 
     async def get_ai_response(self, user_message: str, history: list = [], context: str = ""):
@@ -59,7 +61,7 @@ class AIService:
                 payload = {
                     "model": model_id,
                     "messages": messages,
-                    "max_tokens": 1024, # Optimized for complete answers
+                    "max_tokens": 4096, # Detailed 2000 word answers
                     "temperature": 0.6, # Slightly lower for more structured/stable output
                     "stream": False
                 }
