@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from api.models import ChatRequest, WeaknessRequest, FlashcardRequest
+from api.models import ChatRequest, WeaknessRequest, FlashcardRequest, TestRequest
 from services.ai_service import ai_service
 
 router = APIRouter()
@@ -37,4 +37,10 @@ async def generate_flashcards(request: FlashcardRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
+@router.post("/test/generate")
+async def generate_test(request: TestRequest):
+    try:
+        test = await ai_service.generate_test(request.dict())
+        return test
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

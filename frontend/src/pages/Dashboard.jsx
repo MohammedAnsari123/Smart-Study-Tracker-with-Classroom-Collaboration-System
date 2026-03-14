@@ -5,6 +5,7 @@ import TopBar from '../components/TopBar';
 import LogStudySessionModal from '../components/LogStudySessionModal';
 import PomodoroTimer from '../components/PomodoroTimer';
 import ConceptHeatmap from '../components/ConceptHeatmap';
+import AITestModal from '../components/tracker/AITestModal';
 
 import { TrendingUp, Clock, AlertCircle, PlusCircle, History, Calendar, Star, ChevronRight, BookOpen, Target, Activity, Brain, Zap } from 'lucide-react';
 import {
@@ -31,6 +32,7 @@ const Dashboard = () => {
     const sessionsPerPage = 5;
 
     const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+    const [activeTestSession, setActiveTestSession] = useState(null);
 
     const fetchStudyData = async () => {
         const token = localStorage.getItem('token');
@@ -100,8 +102,16 @@ const Dashboard = () => {
         fetchStudyData();
     }, []);
 
-    const handleSessionLogged = () => {
+    const handleSessionLogged = (loggedSessionResponse) => {
         fetchStudyData();
+        if (loggedSessionResponse && loggedSessionResponse._id) {
+            setActiveTestSession(loggedSessionResponse);
+        }
+    };
+
+    const handleTestComplete = () => {
+        // Run fetch again to get updated sessions array containing the test score
+        fetchStudyData(); 
     };
 
     const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
@@ -463,9 +473,17 @@ const Dashboard = () => {
                                             {new Date(session.sessionDate).toLocaleDateString()}
                                         </td>
                                         <td className="px-8 py-5 text-center">
-                                            <span className="inline-flex items-center px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded text-xs font-bold">
+                                            <span className="inline-flex items-center px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded text-xs font-bold mr-2">
                                                 {session.durationMinutes}m
                                             </span>
+                                            {session.testScore !== undefined && (
+                                                <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-bold mt-1 md:mt-0 shadow-sm
+                                                    ${session.testScore >= 80 ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800/50' :
+                                                    session.testScore >= 60 ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50' :
+                                                    'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 border border-orange-200 dark:border-orange-800/50'}`}>
+                                                    Lvl {session.testScore}
+                                                </span>
+                                            )}
                                         </td>
                                         <td className="px-8 py-5 text-center">
                                             <div className="flex justify-center items-center">
@@ -512,6 +530,13 @@ const Dashboard = () => {
                     isOpen={isLogModalOpen}
                     onClose={() => setIsLogModalOpen(false)}
                     onSessionLogged={handleSessionLogged}
+                />
+
+                <AITestModal 
+                    isOpen={!!activeTestSession}
+                    onClose={() => setActiveTestSession(null)}
+                    sessionData={activeTestSession}
+                    onTestComplete={handleTestComplete}
                 />
             </div>
         </div>

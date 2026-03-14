@@ -21,7 +21,7 @@ app.use('/analytics', require('./routes/analytics'));
 app.use('/flashcards', require('./routes/flashcard'));
 app.use('/api/ai', require('./routes/ai'));
 app.use('/progress', require('./routes/progress'));
-
+app.use('/api/admin', require('./routes/adminRoutes'));
 
 
 // Error Handling Middleware

@@ -25,4 +25,9 @@ class FlashcardRequest(BaseModel):
     subject: str
     topics: List[str]
 
-
+class TestRequest(BaseModel):
+    subject: str
+    topic: str
+    subtopic: Optional[str] = ""
+    durationMinutes: Optional[int] = 30
+    notes: Optional[str] = ""

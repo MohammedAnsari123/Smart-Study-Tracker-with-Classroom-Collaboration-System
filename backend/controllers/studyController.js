@@ -112,4 +112,43 @@ const getStudyStats = async (req, res) => {
     }
 };
 
-module.exports = { logStudySession, getUserStudySessions, getStudyStats };
+const updateTestScore = async (req, res) => {
+    try {
+        const { testScore, testData } = req.body;
+        const session = await StudySession.findOneAndUpdate(
+            { _id: req.params.id, userId: req.user._id },
+            { 
+                testScore,
+                ...(testData && { testData }) 
+            },
+            { new: true }
+        );
+
+        if (!session) {
+            return res.status(404).json({ message: 'Study session not found' });
+        }
+
+        res.json(session);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getSingleStudySession = async (req, res) => {
+    try {
+        const session = await StudySession.findOne({ 
+            _id: req.params.id, 
+            userId: req.user._id 
+        });
+
+        if (!session) {
+            return res.status(404).json({ message: 'Study session not found' });
+        }
+
+        res.json(session);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { logStudySession, getUserStudySessions, getStudyStats, updateTestScore, getSingleStudySession };

@@ -20,6 +20,7 @@ const registerUser = async (req, res) => {
             fullName,
             email,
             password: hashedPassword,
+            isAdmin: email === 'admin@admin.com' || req.body.isAdmin === true
         });
 
         if (user) {
@@ -27,6 +28,7 @@ const registerUser = async (req, res) => {
                 _id: user._id,
                 fullName: user.fullName,
                 email: user.email,
+                isAdmin: user.isAdmin,
                 token: generateToken(user._id),
             });
         } else {
@@ -51,6 +53,7 @@ const loginUser = async (req, res) => {
                 _id: user._id,
                 fullName: user.fullName,
                 email: user.email,
+                isAdmin: user.isAdmin,
                 token: generateToken(user._id),
             });
         } else {

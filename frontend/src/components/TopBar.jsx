@@ -59,16 +59,6 @@ const TopBar = () => {
                                     Classrooms
                                 </Link>
                                 <Link
-                                    to="/curriculum"
-                                    className={`inline-flex items-center px-3 py-2 text-sm font-bold rounded-lg transition-colors ${location.pathname === '/curriculum'
-                                        ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
-                                        : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'
-                                        }`}
-                                >
-                                    <ListTree className="w-4 h-4 mr-2" />
-                                    Curriculum
-                                </Link>
-                                <Link
                                     to="/flashcards"
                                     className={`inline-flex items-center px-3 py-2 text-sm font-bold rounded-lg transition-colors ${location.pathname === '/flashcards'
                                         ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
@@ -126,7 +116,6 @@ const TopBar = () => {
                         {[
                             { to: '/dashboard', label: 'Tracker', icon: LayoutDashboard },
                             { to: '/classrooms', label: 'Classrooms', icon: Users },
-                            { to: '/curriculum', label: 'Curriculum', icon: ListTree },
                             { to: '/flashcards', label: 'Flashcards', icon: Brain },
                             { to: '/chatbot', label: 'AI Assistant', icon: Sparkles, color: 'text-primary-500' }
                         ].map((link) => {

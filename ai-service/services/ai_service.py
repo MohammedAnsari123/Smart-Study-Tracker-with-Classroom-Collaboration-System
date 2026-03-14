@@ -214,6 +214,60 @@ class AIService:
             print(f"Flashcard generation error: {str(e)}")
             return []
 
+    async def generate_test(self, test_data: dict):
+        if not self.api_token:
+            return {"error": "HF_API_TOKEN missing", "questions": []}
+
+        subject = test_data.get("subject", "General")
+        topic = test_data.get("topic", "Various Topics")
+        subtopic = test_data.get("subtopic", "")
+        duration = test_data.get("durationMinutes", 30)
+        notes = test_data.get("notes", "")
+
+        prompt = (
+            f"Generate a 10-question multiple-choice test for a student who just studied '{subject}' "
+            f"focusing on the topic '{topic}'" + (f" and subtopic '{subtopic}'. " if subtopic else ". ") +
+            f"They studied for {duration} minutes. Notes: '{notes}'. "
+            "For each question, provide the 'question', a list of 4 'options', and the exact string of the 'correctAnswer' (which must be exactly one of the options). "
+            "Return the response ONLY as a valid JSON object in this format: "
+            '{"questions": [{"question": "What is x?", "options": ["y", "z", "w", "x"], "correctAnswer": "x"}]}'
+        )
+
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.api_token}",
+                "Content-Type": "application/json"
+            }
+            
+            payload = {
+                "model": self.primary_model,
+                "messages": [
+                    {"role": "system", "content": "You are a teacher evaluating a student. Return JSON strictly."},
+                    {"role": "user", "content": prompt}
+                ],
+                "max_tokens": 2000,
+                "temperature": 0.4,
+                "stream": False
+            }
+
+            response = requests.post(self.api_url, headers=headers, json=payload, timeout=60)
+            response.raise_for_status()
+            
+            result = response.json()
+            content = result["choices"][0]["message"]["content"]
+            
+            if "</think>" in content:
+                content = content.split("</think>")[-1].strip()
+            if "```json" in content:
+                content = content.split("```json")[1].split("```")[0].strip()
+            elif "```" in content:
+                content = content.split("```")[1].strip()
+            
+            parsed = json.loads(content)
+            return parsed
+
+        except Exception as e:
+            print(f"Test generation error: {str(e)}")
+            return {"error": str(e), "questions": []}
 
 ai_service = AIService()
-

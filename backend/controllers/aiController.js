@@ -1,4 +1,5 @@
 const pdf = require('pdf-parse');
+const axios = require('axios');
 
 const extractTextFromPDF = async (req, res) => {
     try {
@@ -28,4 +29,23 @@ const extractTextFromPDF = async (req, res) => {
     }
 };
 
-module.exports = { extractTextFromPDF };
+const generateTest = async (req, res) => {
+    try {
+        const { subject, topic, subtopic, durationMinutes, notes } = req.body;
+        
+        // Dynamically point to the python service (typically driven by env in prod)
+        // Default to port 8000/api to match utils/ai.js config
+        const pyAIUrl = process.env.AI_SERVICE_URL || 'http://localhost:8000/api';
+        
+        const fetchResponse = await axios.post(`${pyAIUrl}/test/generate`, {
+            subject, topic, subtopic, durationMinutes, notes
+        });
+        
+        res.json(fetchResponse.data);
+    } catch (error) {
+        console.error('Test Generation Error:', error);
+        res.status(500).json({ message: `Failed to generate test: ${error.message}` });
+    }
+}
+
+module.exports = { extractTextFromPDF, generateTest };

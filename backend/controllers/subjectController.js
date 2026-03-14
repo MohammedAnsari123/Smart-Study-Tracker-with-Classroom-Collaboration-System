@@ -4,7 +4,6 @@ const createSubject = async (req, res) => {
     try {
         const { name } = req.body;
         const subject = await Subject.create({
-            userId: req.user._id,
             name,
             topics: []
         });
@@ -16,7 +15,8 @@ const createSubject = async (req, res) => {
 
 const getUserSubjects = async (req, res) => {
     try {
-        const subjects = await Subject.find({ userId: req.user._id });
+        // Return global subjects instead of user-specific
+        const subjects = await Subject.find({});
         res.json(subjects);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -27,7 +27,7 @@ const addTopicToSubject = async (req, res) => {
     try {
         const { topicName } = req.body;
         const subject = await Subject.findOneAndUpdate(
-            { _id: req.params.id, userId: req.user._id },
+            { _id: req.params.id },
             { $push: { topics: { name: topicName, subtopics: [] } } },
             { new: true }
         );
@@ -41,7 +41,7 @@ const addSubtopicToTopic = async (req, res) => {
     try {
         const { topicId, subtopicName } = req.body;
         const subject = await Subject.findOneAndUpdate(
-            { _id: req.params.id, userId: req.user._id, "topics._id": topicId },
+            { _id: req.params.id, "topics._id": topicId },
             { $push: { "topics.$.subtopics": subtopicName } },
             { new: true }
         );
@@ -53,7 +53,7 @@ const addSubtopicToTopic = async (req, res) => {
 
 const deleteSubject = async (req, res) => {
     try {
-        const subject = await Subject.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
+        const subject = await Subject.findOneAndDelete({ _id: req.params.id });
         if (!subject) return res.status(404).json({ message: 'Subject not found' });
         res.json({ message: 'Subject deleted successfully' });
     } catch (error) {
@@ -65,7 +65,7 @@ const deleteTopic = async (req, res) => {
     try {
         const { topicId } = req.params;
         const subject = await Subject.findOneAndUpdate(
-            { _id: req.params.id, userId: req.user._id },
+            { _id: req.params.id },
             { $pull: { topics: { _id: topicId } } },
             { new: true }
         );
@@ -80,7 +80,7 @@ const deleteSubtopic = async (req, res) => {
         const { topicId } = req.params;
         const { subtopicName } = req.body;
         const subject = await Subject.findOneAndUpdate(
-            { _id: req.params.id, userId: req.user._id, "topics._id": topicId },
+            { _id: req.params.id, "topics._id": topicId },
             { $pull: { "topics.$.subtopics": subtopicName } },
             { new: true }
         );

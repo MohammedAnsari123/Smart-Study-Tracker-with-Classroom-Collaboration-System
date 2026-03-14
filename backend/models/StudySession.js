@@ -12,7 +12,8 @@ const studySessionSchema = new mongoose.Schema({
     outcome: { type: String, enum: ['completed', 'interrupted'], default: 'completed' },
     sessionDate: { type: Date, default: Date.now },
     notes: { type: String, default: '' },
-
+    testScore: { type: Number, min: 0, max: 100 }, // Score from the AI generated test
+    testData: { type: Object, default: null } // Stores the completed test questions, answers, and user selections
 }, { timestamps: true });
 
 module.exports = mongoose.model('StudySession', studySessionSchema);
