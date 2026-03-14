@@ -1,0 +1,506 @@
+[
+  {
+    "department": "CO",
+    "semester": 5,
+    "courseCode": "315323",
+    "subjectName": "Software Engineering",
+    "topics": [
+      {
+        "topicName": "Software Development Process",
+        "subtopics": [
+          "Software characteristics",
+          "Software engineering layered approach",
+          "Software development life cycle",
+          "Waterfall model",
+          "RAD model",
+          "Spiral model",
+          "Agile model",
+          "Scrum methodology",
+          "Extreme programming"
+        ]
+      },
+      {
+        "topicName": "Requirement Engineering",
+        "subtopics": [
+          "Requirement gathering",
+          "Requirement analysis",
+          "Functional requirements",
+          "Non functional requirements",
+          "Requirement elicitation",
+          "Use case development",
+          "Requirement validation",
+          "Software Requirement Specification"
+        ]
+      },
+      {
+        "topicName": "Software Modeling",
+        "subtopics": [
+          "Analysis modeling",
+          "Design modeling",
+          "Data flow diagram",
+          "Decision tables",
+          "Structure charts",
+          "UML diagrams",
+          "Use case diagram",
+          "Class diagram",
+          "Sequence diagram"
+        ]
+      },
+      {
+        "topicName": "Project Cost Estimation",
+        "subtopics": [
+          "Project metrics",
+          "Lines of code estimation",
+          "Function point estimation",
+          "Heuristic estimation",
+          "Empirical estimation",
+          "COCOMO model",
+          "Risk identification",
+          "Risk management"
+        ]
+      },
+      {
+        "topicName": "Project Management",
+        "subtopics": [
+          "Work breakdown structure",
+          "Project scheduling",
+          "Gantt chart",
+          "Critical path method",
+          "PERT technique"
+        ]
+      }
+    ]
+  },
+  {
+    "department": "CO",
+    "semester": 5,
+    "courseCode": "315321",
+    "subjectName": "Advanced Computer Network",
+    "topics": [
+      {
+        "topicName": "Internet Architecture",
+        "subtopics": [
+          "Internet structure",
+          "ISP architecture",
+          "IPv4 addressing",
+          "IPv6 addressing",
+          "Subnetting",
+          "Supernetting"
+        ]
+      },
+      {
+        "topicName": "Routing Protocols",
+        "subtopics": [
+          "Routing algorithms",
+          "Distance vector routing",
+          "RIP protocol",
+          "Link state routing",
+          "OSPF protocol",
+          "BGP routing"
+        ]
+      },
+      {
+        "topicName": "Transport Layer",
+        "subtopics": [
+          "UDP protocol",
+          "TCP protocol",
+          "TCP handshake",
+          "Congestion control",
+          "TLS protocol"
+        ]
+      },
+      {
+        "topicName": "Application Layer Protocols",
+        "subtopics": [
+          "DNS protocol",
+          "SMTP protocol",
+          "POP protocol",
+          "IMAP protocol",
+          "FTP protocol",
+          "HTTP protocol"
+        ]
+      },
+      {
+        "topicName": "Wireless Networking",
+        "subtopics": [
+          "3G network",
+          "4G network",
+          "5G network",
+          "Software defined networking",
+          "Edge computing"
+        ]
+      }
+    ]
+  },
+  {
+    "department": "CO",
+    "semester": 5,
+    "courseCode": "315319",
+    "subjectName": "Operating System",
+    "topics": [
+      {
+        "topicName": "Operating System Basics",
+        "subtopics": [
+          "Operating system functions",
+          "Batch operating system",
+          "Time sharing system",
+          "Distributed system",
+          "Real time operating system"
+        ]
+      },
+      {
+        "topicName": "Process Management",
+        "subtopics": [
+          "Process states",
+          "Process control block",
+          "Context switching",
+          "Inter process communication",
+          "Threads"
+        ]
+      },
+      {
+        "topicName": "CPU Scheduling",
+        "subtopics": [
+          "FCFS scheduling",
+          "Shortest job first",
+          "Shortest remaining time",
+          "Round robin scheduling",
+          "Priority scheduling"
+        ]
+      },
+      {
+        "topicName": "Memory Management",
+        "subtopics": [
+          "Paging",
+          "Segmentation",
+          "Virtual memory",
+          "Page replacement algorithms",
+          "FIFO",
+          "LRU"
+        ]
+      },
+      {
+        "topicName": "File Management",
+        "subtopics": [
+          "File attributes",
+          "File operations",
+          "Sequential access",
+          "Direct access",
+          "Directory structures"
+        ]
+      }
+    ]
+  },
+  {
+    "department": "CO",
+    "semester": 5,
+    "courseCode": "315327",
+    "subjectName": "Entrepreneurship Development",
+    "topics": [
+      {
+        "topicName": "Entrepreneurship Basics",
+        "subtopics": [
+          "Concept of entrepreneurship",
+          "Characteristics of entrepreneur",
+          "Role of entrepreneur",
+          "Entrepreneurship ecosystem"
+        ]
+      },
+      {
+        "topicName": "Startup Planning",
+        "subtopics": [
+          "Idea generation",
+          "Opportunity identification",
+          "Market research",
+          "Business planning"
+        ]
+      },
+      {
+        "topicName": "Startup Support Systems",
+        "subtopics": [
+          "Government startup schemes",
+          "Startup India",
+          "MSME support",
+          "Financial assistance"
+        ]
+      },
+      {
+        "topicName": "Enterprise Management",
+        "subtopics": [
+          "Business risk management",
+          "Business communication",
+          "Marketing strategies"
+        ]
+      }
+    ]
+  },
+  {
+    "department": "CO",
+    "semester": 5,
+    "courseCode": "315328",
+    "subjectName": "Seminar and Project Initiation",
+    "topics": [
+      {
+        "topicName": "Research and Seminar Preparation",
+        "subtopics": [
+          "Topic selection",
+          "Literature review",
+          "Research methodology",
+          "Technical paper writing"
+        ]
+      },
+      {
+        "topicName": "Project Planning",
+        "subtopics": [
+          "Problem identification",
+          "Project scope",
+          "Project objectives",
+          "Feasibility analysis"
+        ]
+      },
+      {
+        "topicName": "Presentation Skills",
+        "subtopics": [
+          "Technical presentation",
+          "Report writing",
+          "Documentation standards"
+        ]
+      }
+    ]
+  },
+  {
+    "department": "CO",
+    "semester": 5,
+    "courseCode": "315004",
+    "subjectName": "Internship",
+    "topics": [
+      {
+        "topicName": "Industrial Exposure",
+        "subtopics": [
+          "Industry orientation",
+          "Industrial safety",
+          "Workplace environment"
+        ]
+      },
+      {
+        "topicName": "Practical Training",
+        "subtopics": [
+          "Project participation",
+          "Team collaboration",
+          "Industrial tools usage"
+        ]
+      },
+      {
+        "topicName": "Internship Report",
+        "subtopics": [
+          "Daily diary maintenance",
+          "Training report preparation",
+          "Final presentation"
+        ]
+      }
+    ]
+  },
+  {
+    "department": "CO",
+    "semester": 6,
+    "courseCode": "315332",
+    "subjectName": "Client Side Scripting",
+    "topics": [
+      {
+        "topicName": "JavaScript Basics",
+        "subtopics": [
+          "Variables",
+          "Functions",
+          "Objects",
+          "Events",
+          "DOM manipulation"
+        ]
+      },
+      {
+        "topicName": "React Framework",
+        "subtopics": [
+          "React components",
+          "JSX",
+          "Props and state",
+          "React hooks",
+          "React lifecycle"
+        ]
+      },
+      {
+        "topicName": "Frontend Development",
+        "subtopics": [
+          "Forms",
+          "API calls",
+          "Single page applications",
+          "Frontend routing"
+        ]
+      }
+    ]
+  },
+  {
+    "department": "CO",
+    "semester": 6,
+    "courseCode": "315333",
+    "subjectName": "Mobile Application Development",
+    "topics": [
+      {
+        "topicName": "Android Basics",
+        "subtopics": [
+          "Android architecture",
+          "Activities",
+          "Layouts",
+          "Intents"
+        ]
+      },
+      {
+        "topicName": "User Interface Design",
+        "subtopics": [
+          "XML layouts",
+          "UI components",
+          "Navigation"
+        ]
+      },
+      {
+        "topicName": "Database Integration",
+        "subtopics": [
+          "SQLite database",
+          "Firebase database",
+          "Data storage"
+        ]
+      }
+    ]
+  },
+  {
+    "department": "CO",
+    "semester": 6,
+    "courseCode": "315334",
+    "subjectName": "Software Testing",
+    "topics": [
+      {
+        "topicName": "Testing Fundamentals",
+        "subtopics": [
+          "Software testing principles",
+          "Verification and validation",
+          "Testing life cycle"
+        ]
+      },
+      {
+        "topicName": "Testing Techniques",
+        "subtopics": [
+          "Black box testing",
+          "White box testing",
+          "Boundary value analysis",
+          "Equivalence partitioning"
+        ]
+      },
+      {
+        "topicName": "Automation Testing",
+        "subtopics": [
+          "Selenium testing",
+          "Test case design",
+          "Defect tracking"
+        ]
+      }
+    ]
+  },
+  {
+    "department": "CO",
+    "semester": 6,
+    "courseCode": "315335",
+    "subjectName": "Digital Forensics and Hacking Techniques",
+    "topics": [
+      {
+        "topicName": "Cyber Security Basics",
+        "subtopics": [
+          "Cyber crime",
+          "Security threats",
+          "Attack vectors"
+        ]
+      },
+      {
+        "topicName": "Ethical Hacking",
+        "subtopics": [
+          "Footprinting",
+          "Scanning",
+          "Enumeration",
+          "Vulnerability analysis"
+        ]
+      },
+      {
+        "topicName": "Digital Forensics",
+        "subtopics": [
+          "Evidence collection",
+          "Chain of custody",
+          "Forensic investigation"
+        ]
+      }
+    ]
+  },
+  {
+    "department": "CO",
+    "semester": 6,
+    "courseCode": "315336",
+    "subjectName": "Management",
+    "topics": [
+      {
+        "topicName": "Management Basics",
+        "subtopics": [
+          "Principles of management",
+          "Planning",
+          "Organizing",
+          "Leading",
+          "Controlling"
+        ]
+      },
+      {
+        "topicName": "Project Management",
+        "subtopics": [
+          "Project planning",
+          "Team management",
+          "Risk management"
+        ]
+      },
+      {
+        "topicName": "Organizational Behavior",
+        "subtopics": [
+          "Motivation",
+          "Leadership",
+          "Communication"
+        ]
+      }
+    ]
+  },
+  {
+    "department": "CO",
+    "semester": 6,
+    "courseCode": "315004",
+    "subjectName": "Capstone Project",
+    "topics": [
+      {
+        "topicName": "Project Development",
+        "subtopics": [
+          "System design",
+          "Implementation",
+          "Integration",
+          "Deployment"
+        ]
+      },
+      {
+        "topicName": "Project Evaluation",
+        "subtopics": [
+          "Testing",
+          "Performance evaluation",
+          "Documentation"
+        ]
+      },
+      {
+        "topicName": "Project Presentation",
+        "subtopics": [
+          "Final report",
+          "Viva presentation",
+          "Project demonstration"
+        ]
+      }
+    ]
+  }
+]

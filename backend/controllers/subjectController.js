@@ -1,10 +1,17 @@
 const Subject = require('../models/Subject');
 
+// Create a subject (admin)
 const createSubject = async (req, res) => {
     try {
-        const { name } = req.body;
+        const { department, semester, courseCode, subjectName } = req.body;
+        if (!department || !semester || !courseCode || !subjectName) {
+            return res.status(400).json({ message: 'department, semester, courseCode, and subjectName are required' });
+        }
         const subject = await Subject.create({
-            name,
+            department: department.toUpperCase(),
+            semester,
+            courseCode,
+            subjectName,
             topics: []
         });
         res.status(201).json(subject);
@@ -13,10 +20,66 @@ const createSubject = async (req, res) => {
     }
 };
 
+// Bulk import subjects from JSON (admin)
+const bulkImportSubjects = async (req, res) => {
+    try {
+        const { subjects } = req.body; // Array of subject objects
+
+        if (!Array.isArray(subjects) || subjects.length === 0) {
+            return res.status(400).json({ message: 'Please provide an array of subjects' });
+        }
+
+        const results = [];
+        for (const sub of subjects) {
+            if (!sub.department || !sub.semester || !sub.courseCode || !sub.subjectName) {
+                continue; // Skip invalid entries
+            }
+            const created = await Subject.create({
+                department: sub.department.toUpperCase(),
+                semester: sub.semester,
+                courseCode: sub.courseCode,
+                subjectName: sub.subjectName,
+                topics: sub.topics || []
+            });
+            results.push(created);
+        }
+
+        res.status(201).json({ message: `${results.length} subjects imported successfully`, subjects: results });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Get subjects — for students: auto-filter by user's dept/semester. Supports query params for admin.
 const getUserSubjects = async (req, res) => {
     try {
-        // Return global subjects instead of user-specific
-        const subjects = await Subject.find({});
+        const filter = {};
+
+        // If query params are provided (admin filtering), use them
+        if (req.query.department) filter.department = req.query.department.toUpperCase();
+        if (req.query.semester) filter.semester = Number(req.query.semester);
+
+        // If no query params and user is a student, auto-filter by their profile
+        if (!req.query.department && !req.query.semester && req.user && req.user.department) {
+            filter.department = req.user.department;
+            filter.semester = req.user.semester;
+        }
+
+        const subjects = await Subject.find(filter).sort('subjectName');
+        res.json(subjects);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Get ALL subjects (admin — no filtering)
+const getAllSubjects = async (req, res) => {
+    try {
+        const filter = {};
+        if (req.query.department) filter.department = req.query.department.toUpperCase();
+        if (req.query.semester) filter.semester = Number(req.query.semester);
+
+        const subjects = await Subject.find(filter).sort('department semester subjectName');
         res.json(subjects);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -28,7 +91,7 @@ const addTopicToSubject = async (req, res) => {
         const { topicName } = req.body;
         const subject = await Subject.findOneAndUpdate(
             { _id: req.params.id },
-            { $push: { topics: { name: topicName, subtopics: [] } } },
+            { $push: { topics: { topicName, subtopics: [] } } },
             { new: true }
         );
         res.json(subject);
@@ -92,7 +155,9 @@ const deleteSubtopic = async (req, res) => {
 
 module.exports = {
     createSubject,
+    bulkImportSubjects,
     getUserSubjects,
+    getAllSubjects,
     addTopicToSubject,
     addSubtopicToTopic,
     deleteSubject,

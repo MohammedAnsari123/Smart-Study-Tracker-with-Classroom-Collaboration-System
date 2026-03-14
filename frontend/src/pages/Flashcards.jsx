@@ -124,7 +124,7 @@ const Flashcards = () => {
                                 <div className="w-12 h-12 bg-primary-50 dark:bg-primary-900/20 rounded-2xl flex items-center justify-center text-primary-600 mb-6 group-hover:scale-110 transition-transform">
                                     <Brain className="w-6 h-6" />
                                 </div>
-                                <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-2">{sub.name}</h3>
+                                <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-2">{sub.subjectName}</h3>
                                 <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                                     {sub.topics?.length || 0} Core Topics • Click to manage cards
                                 </p>
@@ -142,7 +142,7 @@ const Flashcards = () => {
                                     <ChevronLeft className="w-6 h-6" />
                                 </button>
                                 <div>
-                                    <h2 className="text-2xl font-black dark:text-white uppercase tracking-tighter">{selectedSubject.name}</h2>
+                                    <h2 className="text-2xl font-black dark:text-white uppercase tracking-tighter">{selectedSubject.subjectName}</h2>
                                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{flashcards.length} Total Cards</p>
                                 </div>
                             </div>
@@ -174,7 +174,7 @@ const Flashcards = () => {
                                     <Sparkles className="w-6 h-6 animate-bounce" />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-primary-900 dark:text-primary-100">AI is analyzing {selectedSubject.name}...</h4>
+                                    <h4 className="font-bold text-primary-900 dark:text-primary-100">AI is analyzing {selectedSubject.subjectName}...</h4>
                                     <p className="text-sm text-primary-700 dark:text-primary-300 italic">Generating smart flashcards based on your curriculum topics.</p>
                                 </div>
                             </div>

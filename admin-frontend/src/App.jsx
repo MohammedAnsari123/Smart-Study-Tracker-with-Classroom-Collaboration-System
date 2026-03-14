@@ -6,6 +6,11 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import CurriculumManagement from './pages/CurriculumManagement';
 import UsersManagement from './pages/UsersManagement';
+import StudyMaterials from './pages/StudyMaterials';
+import Assignments from './pages/Assignments';
+import Quizzes from './pages/Quizzes';
+import Analytics from './pages/Analytics';
+import SystemLogs from './pages/SystemLogs';
 import AdminLayout from './components/AdminLayout';
 
 const ProtectedRoute = ({ children }) => {
@@ -46,6 +51,11 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="curriculum" element={<CurriculumManagement />} />
           <Route path="users" element={<UsersManagement />} />
+          <Route path="materials" element={<StudyMaterials />} />
+          <Route path="assignments" element={<Assignments />} />
+          <Route path="quizzes" element={<Quizzes />} />
+          <Route path="analytics" element={<Analytics />} />
+          <Route path="logs" element={<SystemLogs />} />
         </Route>
       </Routes>
     </Router>

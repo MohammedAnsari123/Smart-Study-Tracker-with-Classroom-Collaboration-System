@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 
 const subjectSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Optional, mostly unused for global admin curriculum
-    name: { type: String, required: true },
+    department: { type: String, required: true },
+    semester: { type: Number, required: true },
+    courseCode: { type: String, required: true },
+    subjectName: { type: String, required: true },
     topics: [
         {
-            name: { type: String, required: true },
+            topicName: { type: String, required: true },
             subtopics: [{ type: String }]
         }
     ]

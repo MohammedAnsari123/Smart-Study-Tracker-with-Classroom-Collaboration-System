@@ -8,7 +8,6 @@ const LogStudySessionModal = ({ isOpen, onClose, onSessionLogged }) => {
         topic: '',
         subtopic: '',
         durationMinutes: 30,
-        focusScore: 3,
         notes: '',
     });
     const [subjects, setSubjects] = useState([]);
@@ -37,7 +36,7 @@ const LogStudySessionModal = ({ isOpen, onClose, onSessionLogged }) => {
 
     const handleSubjectChange = (e) => {
         const selectedSubjectName = e.target.value;
-        const subjectObj = subjects.find(s => s.name === selectedSubjectName);
+        const subjectObj = subjects.find(s => s.subjectName === selectedSubjectName);
         setFormData({
             ...formData,
             subject: selectedSubjectName,
@@ -50,7 +49,7 @@ const LogStudySessionModal = ({ isOpen, onClose, onSessionLogged }) => {
 
     const handleTopicChange = (e) => {
         const selectedTopicName = e.target.value;
-        const topicObj = availableTopics.find(t => t.name === selectedTopicName);
+        const topicObj = availableTopics.find(t => t.topicName === selectedTopicName);
         setFormData({
             ...formData,
             topic: selectedTopicName,
@@ -112,7 +111,7 @@ const LogStudySessionModal = ({ isOpen, onClose, onSessionLogged }) => {
                                 className="mt-1 block w-full rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary-500 h-12 px-4 font-bold"
                             >
                                 <option value="">Select a Subject</option>
-                                {subjects.map(s => <option key={s._id} value={s.name}>{s.name}</option>)}
+                                {subjects.map(s => <option key={s._id} value={s.subjectName}>{s.subjectName}</option>)}
                             </select>
                         </div>
 
@@ -129,7 +128,7 @@ const LogStudySessionModal = ({ isOpen, onClose, onSessionLogged }) => {
                                 className="mt-1 block w-full rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary-500 h-12 px-4 disabled:opacity-50 font-bold"
                             >
                                 <option value="">None</option>
-                                {availableTopics.map(t => <option key={t._id} value={t.name}>{t.name}</option>)}
+                                {availableTopics.map(t => <option key={t._id} value={t.topicName}>{t.topicName}</option>)}
                             </select>
                         </div>
 
@@ -164,20 +163,7 @@ const LogStudySessionModal = ({ isOpen, onClose, onSessionLogged }) => {
                             />
                         </div>
 
-                        {/* Focus */}
-                        <div>
-                            <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Focus Score (1-5)</label>
-                            <input
-                                type="number"
-                                name="focusScore"
-                                min="1"
-                                max="5"
-                                required
-                                value={formData.focusScore}
-                                onChange={handleChange}
-                                className="mt-1 block w-full rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary-500 h-12 px-4 font-bold"
-                            />
-                        </div>
+
                     </div>
 
                     <div>

@@ -215,10 +215,11 @@ const ChatbotView = () => {
                             </div>
                         ) : (
                             conversations.map(conv => (
-                                <button
+                                <div
                                     key={conv._id}
                                     onClick={() => loadConversation(conv._id)}
-                                    className={`w-full text-left px-3 py-2.5 rounded-lg transition-all group flex items-center justify-between ${
+                                    role="button"
+                                    className={`w-full text-left px-3 py-2.5 rounded-lg transition-all group flex items-center justify-between cursor-pointer ${
                                         activeConversationId === conv._id
                                             ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 border border-primary-100 dark:border-primary-800'
                                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800'
@@ -237,7 +238,7 @@ const ChatbotView = () => {
                                     >
                                         <Trash2 className="w-3.5 h-3.5" />
                                     </button>
-                                </button>
+                                </div>
                             ))
                         )}
                     </div>

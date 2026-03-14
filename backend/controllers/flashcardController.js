@@ -74,17 +74,21 @@ const generateAIFlashcards = async (req, res) => {
         const subject = await Subject.findById(subjectId);
         if (!subject) return res.status(404).json({ message: 'Subject not found' });
 
-        const topics = subject.topics.map(t => t.name);
+        const topics = subject.topics.map(t => t.topicName);
+        console.log(`Generating flashcards for Subject: ${subject.subjectName} with topics: ${topics.join(', ')}`);
 
         // Call Python AI Service
-        const aiResponse = await axios.post('http://localhost:8000/api/generate-flashcards', {
-            subject: subject.name,
+        const aiResponse = await axios.post('http://127.0.0.1:8000/api/generate-flashcards', {
+            subject: subject.subjectName,
             topics: topics
         });
 
+        console.log('AI Service Response status:', aiResponse.status);
         const generatedCards = aiResponse.data.flashcards;
+        console.log(`AI generated ${generatedCards?.length || 0} cards`);
 
         if (!generatedCards || generatedCards.length === 0) {
+            console.error('AI failed to generate cards or returned empty array');
             return res.status(500).json({ message: 'AI failed to generate cards' });
         }
 
@@ -98,8 +102,13 @@ const generateAIFlashcards = async (req, res) => {
         }));
 
         const savedCards = await Flashcard.insertMany(cardsToInsert);
+        console.log(`Successfully saved ${savedCards.length} flashcards to DB`);
         res.status(201).json(savedCards);
     } catch (error) {
+        console.error('Flashcard Generation Error:', error.message);
+        if (error.response) {
+            console.error('AI Service Error Data:', error.response.data);
+        }
         res.status(500).json({ message: error.message });
     }
 };

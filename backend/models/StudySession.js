@@ -6,7 +6,7 @@ const studySessionSchema = new mongoose.Schema({
     topic: { type: String },
     subtopic: { type: String },
     durationMinutes: { type: Number, required: true },
-    focusScore: { type: Number, min: 1, max: 5, required: true },
+    focusScore: { type: Number, min: 1, max: 5 }, // No longer mandatory, will migrate to test-based metrics
     distractionsCount: { type: Number, default: 0 },
     sessionType: { type: String, enum: ['focus', 'break'], default: 'focus' },
     outcome: { type: String, enum: ['completed', 'interrupted'], default: 'completed' },

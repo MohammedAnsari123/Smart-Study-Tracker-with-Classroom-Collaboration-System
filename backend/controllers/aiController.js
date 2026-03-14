@@ -35,7 +35,7 @@ const generateTest = async (req, res) => {
         
         // Dynamically point to the python service (typically driven by env in prod)
         // Default to port 8000/api to match utils/ai.js config
-        const pyAIUrl = process.env.AI_SERVICE_URL || 'http://localhost:8000/api';
+        const pyAIUrl = process.env.AI_SERVICE_URL || 'http://127.0.0.1:8000/api';
         
         const fetchResponse = await axios.post(`${pyAIUrl}/test/generate`, {
             subject, topic, subtopic, durationMinutes, notes

@@ -164,7 +164,7 @@ const Dashboard = () => {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                             {[
                                 { icon: Clock, color: 'text-blue-500', value: `${(stats?.totalDuration / 60 || 0).toFixed(1)}h`, label: 'Total Time' },
-                                { icon: Star, color: 'text-yellow-500', value: stats?.averageFocus || 0, label: 'Avg Focus' },
+                                { icon: Star, color: 'text-yellow-500', value: stats?.averageFocus || 0, label: 'Avg Mastery' },
                                 { icon: TrendingUp, color: 'text-primary-500', value: stats?.productivityScore || 0, label: 'Prod. Score' },
                                 { icon: Calendar, color: 'text-green-500', value: sessions.length, label: 'Sessions' }
                             ].map((stat, idx) => (
@@ -322,7 +322,7 @@ const Dashboard = () => {
                                                 <Star className="w-4 h-4 fill-current mr-1" />
                                                 <span className="font-bold">{timeOptimization?.bestFocus || 0}</span>
                                             </div>
-                                            <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Focus Score</p>
+                                            <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Perf Score</p>
                                         </div>
                                     </div>
                                     <div className="mt-6 pt-6 border-t border-gray-50 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400 leading-relaxed italic">
@@ -431,7 +431,7 @@ const Dashboard = () => {
                                         <PolarGrid strokeOpacity={0.1} />
                                         <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10, fill: '#64748b' }} />
                                         <PolarRadiusAxis hide domain={[0, 5]} />
-                                        <Radar name="Focus Score" dataKey="score" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.3} strokeWidth={2} />
+                                        <Radar name="Performance" dataKey="score" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.3} strokeWidth={2} />
                                         <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '12px', color: '#fff' }} />
                                     </RadarChart>
                                 </ResponsiveContainer>
@@ -456,7 +456,7 @@ const Dashboard = () => {
                                     <th className="px-8 py-4">Subject / Topic</th>
                                     <th className="px-8 py-4">Date</th>
                                     <th className="px-8 py-4 text-center">Duration</th>
-                                    <th className="px-8 py-4 text-center">Focus</th>
+                                    <th className="px-8 py-4 text-center">Performance</th>
                                     <th className="px-8 py-4">Status</th>
                                 </tr>
                             </thead>
@@ -487,9 +487,13 @@ const Dashboard = () => {
                                         </td>
                                         <td className="px-8 py-5 text-center">
                                             <div className="flex justify-center items-center">
-                                                {[...Array(5)].map((_, i) => (
-                                                    <div key={i} className={`w-1.5 h-1.5 rounded-full mx-0.5 ${i < (session.focusScore || 3) ? 'bg-yellow-400' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
-                                                ))}
+                                                {session.testScore !== undefined ? (
+                                                    [...Array(5)].map((_, i) => (
+                                                        <div key={i} className={`w-1.5 h-1.5 rounded-full mx-0.5 ${i < Math.round(session.testScore / 20) ? 'bg-yellow-400' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
+                                                    ))
+                                                ) : (
+                                                    <span className="text-[10px] text-gray-400 font-bold uppercase">Pending Test</span>
+                                                )}
                                             </div>
                                         </td>
                                         <td className="px-8 py-5 text-sm">

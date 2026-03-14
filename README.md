@@ -1,6 +1,6 @@
 # Smart Study Tracker with Classroom Collaboration System
 
-A mission-critical academic operating system that integrates classroom management, assignment tracking, AI-powered study analytics, and a multi-user Kanban collaboration system into a unified premium platform.
+A mission-critical academic operating system that integrates classroom management, assignment tracking, AI-powered study analytics, a global curriculum system, and dynamic AI-generated testing into a unified premium platform.
 
 ---
 
@@ -23,45 +23,47 @@ A mission-critical academic operating system that integrates classroom managemen
 ---
 
 ## 🌟 Project Overview
-The **Smart Study Tracker** bridges the gap between classroom administration and personal study habits. It provides a high-performance environment where students manage academic responsibilities and track learning progress through advanced AI insights.
+The **Smart Study Tracker** bridges the gap between classroom administration and personal study habits. It provides a high-performance environment where students manage academic responsibilities and track learning progress through advanced AI insights and a standardized curriculum system.
 
 **Core Objectives:**
+- **Global Curriculum System:** Standardized subjects, topics, and subtopics sorted by Department and Semester.
 - **Classroom Collaboration:** Secure classroom environments with unique join codes.
-- **Kanban Assignments:** Personal and collaborative assignment management.
+- **AI-Generated Testing:** Dynamic test generation based on curriculum topics with instant results.
 - **AI Analytics:** Data-driven weakness detection and study optimization.
-- **Academic Assistant:** 24/7 AI Tutor with PDF context support.
+- **Academic Assistant:** 24/7 AI Tutor with persistent chat history and PDF context support.
 
 ---
 
 ## 🚀 Key Features
 
+### 🎓 Global Curriculum & Department Management
+- **Centralized Curriculum:** Subjects are managed globally by admins, featuring Course Codes, Departments (CO, IF, IT, etc.), and Semesters (1-6).
+- **Auto-Filtering:** Students automatically see subjects relevant to their registered Department and Semester.
+- **Admin Dashboard:** Powerful interface for creating departments and bulk-importing curriculum data via JSON.
+
 ### 🎓 Classroom & Collaboration
 - **Multi-User Kanban System:** Revolutionary Trello-style workflow where students track individual progress (To-Do, In-Progress, Done) independently.
-- **Teacher Monitoring Hub:** Owners can view a "People" dashboard showing aggregated progress (Todo, Doing, Done) and detailed read-only views of any student's individual Kanban board.
+- **Teacher Monitoring Hub:** Owners can view a "People" dashboard showing aggregated progress and detailed read-only views of any student's individual Kanban board.
 - **Announcement Portal:** Real-time information sharing and file attachments within classrooms.
 - **Assignment System:** Teachers post tasks with deadlines; students upload PDF submissions with status tracking.
-- **Grade Visibility:** Students see their specific marks and teacher feedback directly on the assignment card, with **conditional performance coloring** (Red for <40%, Amber for <75%, Green for ≥75%).
-- **Grade Summary Dashboard:** An automated calculated grade summary in the sidebar using weighted progress and performance-based UI indicators.
-- **Classroom Joining:** Secure enrollment using unique 6-character class codes.
+- **Grade Summary Dashboard:** Automated calculated grade summary in the sidebar using weighted progress and performance-based UI indicators.
 
-### 📊 AI-Powered Analytics
-- **Weakness Detection Engine:** AI identifies tough topics based on session data and flashcard performance.
-- **Study Rhythm Optimization:** Recommends peak performance windows (e.g., "Your focus peaks at 10:00 AM") based on history.
-- **Assignment Risk Predictor:** Tags tasks as Low/Med/High risk using complexity and time-to-deadline analysis.
+### 📊 AI-Powered Analytics & Testing
+- **AI Test Engine:** Generates multiple-choice or descriptive questions instantly based on specific curriculum topics.
+- **Detailed Test Results:** Interactive results page breaking down performance and identifying specific knowledge gaps.
+- **Weakness Detection:** AI identifies tough topics based on session data, test results, and flashcard performance.
 - **Consistency Heatmap:** GitHub-style visualization of academic commitment over time.
-- **Skeletal Loading UI:** Professional animated placeholders during data processing.
+
+### 🤖 AI Tutor 2.0 (Persistent)
+- **Persistent Chat History:** Seamlessly resume past conversations with a dedicated history sidebar.
+- **Conversation Management:** Create, rename, and delete chat threads for organized learning.
+- **PDF Context Support:** Upload academic PDFs to chat specifically about their contents.
+- **Domain Restricted:** Locked to academic queries to ensure professional guidance.
 
 ### ⏱️ Productivity Tools
-- **Gamified Pomodoro:** Customizable focus/break durations with visual progress tracking and distraction logging.
-- **Flashcard System:** Integrated active recall modules with "Direct Recall" high-density grid views.
-- **AI Flashcard Generator:** Instant flashcards created from subject topics via AI curriculum analysis.
+- **Gamified Pomodoro:** Customizable focus/break durations with visual progress tracking.
+- **Flashcard System:** Integrated active recall modules with AI-powered generator using the global curriculum.
 - **Study Tracker:** Granular logging of duration, focus score, and specific topics studied.
-
-### 🤖 AI Tutor 2.0
-- **PDF Context Support:** Upload any academic PDF and chat with the AI about its contents with a 5MB context window.
-- **Domain Restricted:** Locked to academic queries to ensure professional guidance.
-- **Context-Aware Memory:** Maintains conversational flow for complex multi-part explanations.
-- **Fallback Reliability:** Dual-model system (DeepSeek Qwen/Llama) ensures 100% uptime.
 
 ---
 
@@ -69,22 +71,25 @@ The **Smart Study Tracker** bridges the gap between classroom administration and
 
 ```mermaid
 graph TD
-    A[User Auth] --> B[Dashboard]
+    A[User Auth / Dept Select] --> B[Dashboard]
     B --> C[Classroom Management]
     B --> D[Personal Study Tracker]
     B --> E[AI Academic Assistant]
+    B --> F[Curriculum & Tests]
     
     C --> C1[Announcements]
     C --> C2[Assignments & Submissions]
     C --> C3[Multi-User Kanban Board]
-    C --> C4[Teacher Monitoring]
     
     D --> D1[Pomodoro Timer]
     D --> D2[Flashcards]
-    D --> D3[AI Study Analytics]
+    D --> D3[AI analytics]
     
-    E --> E1[PDF Chat]
-    E --> E2[Concept Explainer]
+    E --> E1[Persistent History]
+    E --> E2[PDF Chat]
+    
+    F --> F1[AI Topic Tests]
+    F --> F2[Test Results]
 ```
 
 ---
@@ -95,21 +100,18 @@ graph TD
 - **React 18 & Vite:** High-speed SPA framework.
 - **Tailwind CSS:** Modern utility-first styling with Glassmorphism.
 - **Lucide React:** Premium iconography.
-- **Recharts:** Interactive data visualisations for heatmaps and charts.
-- **React Router Dom 7:** Advanced client-side routing.
-- **React Markdown:** Renders AI responses with code highlighting.
+- **Recharts:** Interactive data visualisations.
+- **React Markdown:** Renders AI responses with high-fidelity code highlighting.
 
 ### Backend
 - **Node.js & Express:** Enterprise-grade server environment.
 - **Mongoose:** Object Data Modeling (ODM) for MongoDB.
-- **JWT & BcryptJS:** Secure authentication and password hashing.
-- **Multer & Cloudinary:** Large file handling and cloud storage with centralized stream-based uploads.
-- **PDF-Parse 1.1.1:** Stable text extraction for AI context processing.
+- **JWT & BcryptJS:** Secure authentication.
+- **Multer & Cloudinary:** Centralized cloud storage for assignments and PDFs.
 
 ### AI Service
 - **Python 3.10+ & FastAPI:** High-performance microservice for AI orchestration.
 - **Hugging Face Hub:** Connects to DeepSeek-R1-Distill-Qwen/Llama models.
-- **Requests & Dotenv:** Service-level configuration and external API calls.
 
 ---
 
@@ -119,125 +121,75 @@ graph TD
 erDiagram
     USER ||--o{ CLASSROOM_MEMBER : joins
     USER ||--o{ STUDY_SESSION : logs
-    USER ||--o{ PROGRESS : has
+    USER ||--o{ CHAT_CONVERSATION : has
     USER ||--o{ SUBMISSION : makes
     
-    CLASSROOM ||--o{ CLASSROOM_MEMBER : contains
     CLASSROOM ||--o{ ASSIGNMENT : posts
-    CLASSROOM ||--o{ ANNOUNCEMENT : posts
-    
     ASSIGNMENT ||--o{ SUBMISSION : receives
-    ASSIGNMENT ||--o{ PROGRESS : tracks
     
-    SUBJECT ||--o{ FLASHCARD : contains
+    DEPARTMENT ||--o{ SUBJECT : categorizes
+    SUBJECT ||--o{ TOPIC : contains
+    TOPIC ||--o{ FLASHCARD : contains
 ```
 
 ### Major Collections:
-- **Users:** Roles (Teacher/Student), Profile Info, Hashed Credentials.
-- **Classrooms:** Class Code, Metadata, Member Lists.
-- **Progress:** Individual assignment status (`todo`, `doing`, `done`) per student.
-- **Assignments:** Max Marks, Deadlines, PDF Attachments.
-- **StudySessions:** Focus scores, durations, and timestamped topic logs.
+- **Users:** Records identity, department, semester, and credentials.
+- **Departments:** Dynamic storage of department codes and available semesters.
+- **Subjects:** Global curriculum data with course codes and nested topics/subtopics.
+- **ChatConversations:** Persistent AI interaction history per user.
+- **Classrooms:** Class codes, metadata, and member management.
 
 ---
 
 ## 📡 API Endpoints
 
 ### 🔑 Authentication (`/api/auth`)
-- `POST /register` - User signup with role selection.
-- `POST /login` - Secure entry with JWT generation.
+- `POST /register` - Includes department and semester selection.
+- `PATCH /profile` - Update registered department/semester.
 
-### 🏫 Classroom & Collaboration (`/api/class`)
-- `POST /create` - Teacher-only class initialization.
-- `POST /join` - Student enrollment via code.
-- `POST /announcement` - Broadcast message with class context.
-- `GET /:id/members` - Retrieve all enrolled students (Teacher view).
-- `POST /progress/update` - Update student-specific Kanban status.
+### 🏫 Curriculum (`/api/admin/subject` & `/departments`)
+- `GET /departments` - Public route to fetch available departments.
+- `GET /subject` - Auto-filters subjects by student's dept/semester.
+- `POST /bulk-import` - (Admin) Import curriculum JSON data.
 
-### 📝 Assignments (`/api/assignment`)
-- `POST /create` - Teachers upload tasks.
-- `GET /class/:classId` - List assignments with deadlines.
-- `POST /:id/submit` - Student assignment submission (Supports PDF, Images, Word).
-- `POST /submission/:submissionId/grade` - Teacher endpoint to grade and provide feedback.
-
-### 📈 Analytics & AI (`/api/study` & `/api/chat`)
-- `GET /analytics/dashboard` - Real-time statistics for charts.
-- `POST /api/ai/extract-pdf` - Extract text from uploaded PDF for AI context.
-- `POST /chat` - AI interaction with parsed PDF context and history.
+### 🤖 Chat (`/chat`)
+- `GET /` - Fetch all conversation titles for sidebar.
+- `POST /create` - Start a new persistent conversation.
+- `POST /message` - Add message to history and get AI response.
 
 ---
 
-## 🛠️ Installation Guide
+## 🛠️ Installation & Seeding
 
-1. **Clone the Project:**
-   ```bash
-   git clone <repository-url>
-   cd "Smart Study Tracker"
-   ```
-
-2. **Server Installation (Backend):**
+1. **Backend Setup:**
    ```bash
    cd backend
    npm install
-   npm run dev  # Starts on Port 5000
+   # Seed the curriculum data
+   node data/seed.js
+   npm run dev
    ```
 
-3. **AI Service Installation (Python):**
+2. **AI Service:**
    ```bash
    cd ai-service
    pip install -r requirements.txt
-   uvicorn main:app --reload  # Starts on Port 8000
+   uvicorn main:app --reload
    ```
 
-4. **Client Installation (Frontend):**
+3. **Frontend:**
    ```bash
    cd frontend
    npm install
-   npm run dev  # Starts on Port 5173
+   npm run dev
    ```
-
----
-
-## 🔑 Environment Variables
-
-### Backend (`/backend/.env`)
-```env
-PORT=5000
-MONGO_URI=mongodb_uri
-JWT_SECRET=secure_secret
-CLOUDINARY_CLOUD_NAME=your_name
-CLOUDINARY_API_KEY=your_key
-CLOUDINARY_API_SECRET=your_secret
-```
-
-### AI Service (`/ai-service/.env`)
-```env
-HF_API_TOKEN=hugging_face_token
-```
-
----
-
-## � Folder Structure
-
-- **/backend:** Express server controllers, routes, Mongoose models, and centralized **utils**.
-- **/frontend:** React components, context providers, Recharts dashboards, and Tailwind styles.
-- **/ai-service:** Python FastAPI logic for LLM processing and subject analysis.
-- **/uploads:** Temporary local buffer for file processing (minimal usage).
 
 ---
 
 ## 🛡️ Security & Performance
-- **Role Isolation:** Strict middleware ensures students cannot access teacher monitoring boards.
-- **Data Optimization:** MongoDB indexing on `userId` for O(1) analytics retrieval.
-- **Reliability:** 1-hour study threshold for AI models to ensure grounded, data-driven insights.
-- **Unified Storage:** Centralized Cloudinary helper allowing secure uploads for **all academic file types** (Images, PDFs, Docs) up to 50MB.
-
----
-
-## 🔮 Future Improvements
-- **Live Classroom Chat:** WebSocket integration for instant messaging.
-- **AI Peer Matching:** Connect students with similar study rhythms.
-- **Parental Dashboard:** View-only access for academic progress monitoring.
+- **Role Isolation:** Private routes prevent unauthorized access to Admin/Teacher zones.
+- **Database Seeding:** Automated script imports standardized Computer Engineering curriculum (Sem 5 & 6) instantly.
+- **Field Normalization:** Switched from ad-hoc naming to structured `subjectName`, `topicName`, and `courseCode` across the entire stack.
 
 ---
 

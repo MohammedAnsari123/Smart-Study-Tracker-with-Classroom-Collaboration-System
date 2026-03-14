@@ -3,6 +3,8 @@ const Assignment = require('../models/Assignment');
 const Submission = require('../models/Submission');
 const ClassMember = require('../models/ClassMember');
 const Flashcard = require('../models/Flashcard');
+const Subject = require('../models/Subject');
+const Classroom = require('../models/Classroom');
 const { analyzeWeaknesses } = require('../utils/ai');
 
 const getPersonalAnalytics = async (req, res) => {
@@ -19,8 +21,11 @@ const getPersonalAnalytics = async (req, res) => {
             });
         }
 
+        const validTestSessions = sessions.filter(s => s.testScore !== undefined);
         const totalDuration = sessions.reduce((sum, session) => sum + session.durationMinutes, 0);
-        const averageFocusScore = sessions.reduce((sum, session) => sum + session.focusScore, 0) / sessions.length;
+        const averageFocusScore = validTestSessions.length > 0 
+            ? (validTestSessions.reduce((sum, session) => sum + (session.testScore / 20), 0) / validTestSessions.length)
+            : 0;
 
         // Calculate productivity score
         const totalStudyHours = (totalDuration / 60).toFixed(2);
@@ -34,8 +39,10 @@ const getPersonalAnalytics = async (req, res) => {
 
         // Subject Mastery (Average Focus per subject)
         const subjectMastery = Object.keys(subjectDistribution).map(subject => {
-            const subjectSessions = sessions.filter(s => s.subject === subject);
-            const avgFocus = subjectSessions.reduce((sum, s) => sum + s.focusScore, 0) / subjectSessions.length;
+            const subjectSessions = sessions.filter(s => s.subject === subject && s.testScore !== undefined);
+            const avgFocus = subjectSessions.length > 0 
+                ? (subjectSessions.reduce((sum, s) => sum + (s.testScore / 20), 0) / subjectSessions.length)
+                : 0;
             return {
                 subject,
                 score: parseFloat(avgFocus.toFixed(1))
@@ -134,7 +141,7 @@ const getWeaknessDetectionData = async (req, res) => {
             subject: s.subject,
             topic: s.topic,
             duration: s.durationMinutes,
-            focus: s.focusScore,
+            focus: s.testScore ? (s.testScore / 20) : 0,
             distractions: s.distractionsCount || 0
         }));
 
@@ -181,16 +188,23 @@ const getWeaknessReport = async (req, res) => {
             });
         }
 
-        // 2. Fetch other relevant data for this subject
+        // 2. Find the subject document to get its ID for flashcard querying
+        const subjectDoc = await Subject.findOne({ subjectName: subject });
+        
+        // 3. Fetch other relevant data for this subject
         const [flashcards, submissions] = await Promise.all([
-            Flashcard.find({ userId, subject }), // Assuming Flashcard model has subject field or linked via subjectId
+            subjectDoc ? Flashcard.find({ userId, subjectId: subjectDoc._id }) : [],
             Submission.find({ userId, marks: { $ne: null } }).populate({
                 path: 'assignmentId',
-                match: { subject: subject }
+                populate: {
+                    path: 'classId',
+                    model: 'Classroom',
+                    match: { subject: subject }
+                }
             })
         ]);
 
-        const filteredSubmissions = submissions.filter(s => s.assignmentId !== null);
+        const filteredSubmissions = submissions.filter(s => s.assignmentId?.classId !== null);
 
         const studyData = {
             subject,
@@ -198,7 +212,7 @@ const getWeaknessReport = async (req, res) => {
             sessions: sessions.map(s => ({
                 topic: s.topic,
                 duration: s.durationMinutes,
-                focus: s.focusScore
+                focus: s.testScore ? (s.testScore / 20) : 0
             })),
             flashcards: flashcards.map(f => ({
                 question: f.question,
@@ -235,9 +249,11 @@ const getTimeOptimizationData = async (req, res) => {
         for (let i = 0; i < 24; i++) hourlyStats[i] = { totalFocus: 0, count: 0 };
 
         sessions.forEach(session => {
-            const hour = new Date(session.sessionDate).getHours();
-            hourlyStats[hour].totalFocus += session.focusScore;
-            hourlyStats[hour].count += 1;
+            if (session.testScore !== undefined) {
+                const hour = new Date(session.sessionDate).getHours();
+                hourlyStats[hour].totalFocus += (session.testScore / 20);
+                hourlyStats[hour].count += 1;
+            }
         });
 
         const recommendations = Object.keys(hourlyStats).map(hour => ({
@@ -274,9 +290,11 @@ const getAssignmentRisk = async (req, res) => {
         // Calculate subject difficulty based on focus scores (inverse: low focus = high difficulty)
         const subjectStats = {};
         sessions.forEach(s => {
-            if (!subjectStats[s.subject]) subjectStats[s.subject] = { totalFocus: 0, count: 0 };
-            subjectStats[s.subject].totalFocus += s.focusScore;
-            subjectStats[s.subject].count += 1;
+            if (s.testScore !== undefined) {
+                if (!subjectStats[s.subject]) subjectStats[s.subject] = { totalFocus: 0, count: 0 };
+                subjectStats[s.subject].totalFocus += (s.testScore / 20);
+                subjectStats[s.subject].count += 1;
+            }
         });
 
         const risks = assignments.map(a => {
@@ -286,8 +304,8 @@ const getAssignmentRisk = async (req, res) => {
             const daysLeft = Math.max(timeDiff / (1000 * 60 * 60 * 24), 0.1);
 
             const stats = subjectStats[a.subject];
-            const avgFocus = stats ? stats.totalFocus / stats.count : 3; // default medium difficulty
-            const difficultyScale = (6 - avgFocus); // Low focus (1) -> 5 (Hard), High focus (5) -> 1 (Easy)
+            const avgFocus = stats ? stats.totalFocus / stats.count : 3; // default medium difficulty (3 is neutral on 1-5)
+            const difficultyScale = (6 - avgFocus); // Low performance (1) -> 5 (Hard), High performance (5) -> 1 (Easy)
 
             const riskScore = (difficultyScale / daysLeft) * 10;
 
@@ -336,8 +354,10 @@ const getHeatmapData = async (req, res) => {
                 };
             }
             dailyStats[dateStr].minutes += session.durationMinutes;
-            dailyStats[dateStr].totalFocus += session.focusScore;
-            dailyStats[dateStr].count += 1;
+            if (session.testScore !== undefined) {
+                dailyStats[dateStr].totalFocus += (session.testScore / 20);
+                dailyStats[dateStr].count += 1;
+            }
         });
 
         const heatmapData = Object.values(dailyStats).map(day => ({
@@ -363,7 +383,6 @@ const getBurnoutAnalysis = async (req, res) => {
             userId,
             sessionDate: { $gte: sevenDaysAgo }
         }).sort({ sessionDate: 1 });
-
         if (sessions.length < 3) {
             return res.json({
                 riskLevel: 'Low',
@@ -372,24 +391,28 @@ const getBurnoutAnalysis = async (req, res) => {
         }
 
         const totalHours = sessions.reduce((sum, s) => sum + (s.durationMinutes / 60), 0);
-        const avgFocus = sessions.reduce((sum, s) => sum + s.focusScore, 0) / sessions.length;
+        const validPerformanceSessions = sessions.filter(s => s.testScore !== undefined);
 
-        // Check for declining focus trend
-        const firstHalf = sessions.slice(0, Math.floor(sessions.length / 2));
-        const secondHalf = sessions.slice(Math.floor(sessions.length / 2));
-        const focus1 = firstHalf.reduce((sum, s) => sum + s.focusScore, 0) / firstHalf.length;
-        const focus2 = secondHalf.reduce((sum, s) => sum + s.focusScore, 0) / secondHalf.length;
-        const focusDecline = focus1 - focus2;
+        const avgScore = validPerformanceSessions.length > 0
+            ? validPerformanceSessions.reduce((sum, s) => sum + (s.testScore / 20), 0) / validPerformanceSessions.length
+            : 3; // Default neutral
+
+        // Check for declining performance trend
+        const firstHalf = validPerformanceSessions.slice(0, Math.floor(validPerformanceSessions.length / 2));
+        const secondHalf = validPerformanceSessions.slice(Math.floor(validPerformanceSessions.length / 2));
+        const score1 = firstHalf.length > 0 ? firstHalf.reduce((sum, s) => sum + (s.testScore / 20), 0) / firstHalf.length : 3;
+        const score2 = secondHalf.length > 0 ? secondHalf.reduce((sum, s) => sum + (s.testScore / 20), 0) / secondHalf.length : 3;
+        const scoreDecline = score1 - score2;
 
         let riskLevel = 'Low';
         let message = 'Your study balance looks healthy. Keep it up!';
 
-        if (totalHours > 40 || (focusDecline > 1 && totalHours > 20)) {
+        if (totalHours > 40 || (scoreDecline > 1 && totalHours > 20)) {
             riskLevel = 'High';
             message = 'Fatigue detected. We recommend taking a 24-hour break to reset.';
-        } else if (totalHours > 25 || focusDecline > 0.5) {
+        } else if (totalHours > 25 || scoreDecline > 0.5) {
             riskLevel = 'Medium';
-            message = 'Consistency is good, but focus is slipping. Try a shorter Pomodoro session.';
+            message = 'Consistency is good, but performance is slipping. Try a shorter Pomodoro session.';
         }
 
         res.json({
@@ -397,8 +420,8 @@ const getBurnoutAnalysis = async (req, res) => {
             message,
             stats: {
                 weeklyHours: totalHours.toFixed(1),
-                avgFocus: avgFocus.toFixed(1),
-                focusTrend: focusDecline > 0 ? 'Declining' : 'Stable'
+                avgPerformance: avgScore.toFixed(1),
+                performanceTrend: scoreDecline > 0 ? 'Declining' : 'Stable'
             }
         });
     } catch (error) {

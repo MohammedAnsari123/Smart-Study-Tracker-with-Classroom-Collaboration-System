@@ -178,6 +178,7 @@ class AIService:
             '[{"question": "What is X?", "answer": "X is Y."}, {"question": "Define Z.", "answer": "Z is A."}]'
         )
 
+        print(f"Generating flashcards for {subject}...")
         try:
             headers = {
                 "Authorization": f"Bearer {self.api_token}",
@@ -200,6 +201,7 @@ class AIService:
             
             result = response.json()
             content = result["choices"][0]["message"]["content"]
+            print(f"Raw AI content length: {len(content)}")
             
             # Clean up potential markdown formatting or think blocks
             if "</think>" in content:
@@ -209,11 +211,15 @@ class AIService:
             elif "```" in content:
                 content = content.split("```")[1].strip()
             
+            print(f"Cleaned content for parsing: {content[:100]}...")
             cards = json.loads(content)
+            print(f"Parsed {len(cards) if isinstance(cards, list) else 0} cards")
             return cards if isinstance(cards, list) else []
 
         except Exception as e:
             print(f"Flashcard generation error: {str(e)}")
+            if 'content' in locals():
+                print(f"Failed content snippet: {content[:200]}")
             return []
 
     async def generate_test(self, test_data: dict):

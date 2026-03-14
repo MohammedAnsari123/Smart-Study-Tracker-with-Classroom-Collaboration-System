@@ -7,9 +7,13 @@ const generateToken = (id) => {
 };
 
 const registerUser = async (req, res) => {
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password, department, semester } = req.body;
 
     try {
+        if (!department || !semester) {
+            return res.status(400).json({ message: 'Department and semester are required' });
+        }
+
         const userExists = await User.findOne({ email });
         if (userExists) return res.status(400).json({ message: 'User already exists' });
 
@@ -20,7 +24,8 @@ const registerUser = async (req, res) => {
             fullName,
             email,
             password: hashedPassword,
-            isAdmin: email === 'admin@admin.com' || req.body.isAdmin === true
+            department: department.toUpperCase(),
+            semester: Number(semester)
         });
 
         if (user) {
@@ -28,7 +33,8 @@ const registerUser = async (req, res) => {
                 _id: user._id,
                 fullName: user.fullName,
                 email: user.email,
-                isAdmin: user.isAdmin,
+                department: user.department,
+                semester: user.semester,
                 token: generateToken(user._id),
             });
         } else {
@@ -53,7 +59,8 @@ const loginUser = async (req, res) => {
                 _id: user._id,
                 fullName: user.fullName,
                 email: user.email,
-                isAdmin: user.isAdmin,
+                department: user.department,
+                semester: user.semester,
                 token: generateToken(user._id),
             });
         } else {
@@ -73,4 +80,25 @@ const getMe = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser, getMe };
+const updateProfile = async (req, res) => {
+    try {
+        const { department, semester, fullName } = req.body;
+        const updateData = {};
+        if (department) updateData.department = department.toUpperCase();
+        if (semester) updateData.semester = Number(semester);
+        if (fullName) updateData.fullName = fullName;
+
+        const user = await User.findByIdAndUpdate(req.user._id, updateData, { new: true }).select('-password');
+        res.json({
+            _id: user._id,
+            fullName: user.fullName,
+            email: user.email,
+            department: user.department,
+            semester: user.semester
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { registerUser, loginUser, getMe, updateProfile };

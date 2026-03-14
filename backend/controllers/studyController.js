@@ -46,9 +46,15 @@ const getStudyStats = async (req, res) => {
             });
         }
 
+        const validTestSessions = sessions.filter(s => s.testScore !== undefined);
         const totalDuration = sessions.reduce((acc, curr) => acc + curr.durationMinutes, 0);
-        const averageFocus = sessions.reduce((acc, curr) => acc + curr.focusScore, 0) / sessions.length;
-        const productivityScore = ((totalDuration / 60) * averageFocus).toFixed(2);
+        
+        // Normalize testScore (0-100) to 1-5 scale for averageFocus display
+        const averageFocus = validTestSessions.length > 0 
+            ? (validTestSessions.reduce((acc, curr) => acc + (curr.testScore / 20), 0) / validTestSessions.length)
+            : 0;
+
+        const productivityScore = ((totalDuration / 60) * (averageFocus || 1)).toFixed(2);
 
         // 1. Subject Distribution (Pie Chart)
         const subjectDistribution = {};
@@ -76,20 +82,25 @@ const getStudyStats = async (req, res) => {
             };
         });
 
-        // 3. Focus Trend (Line/Area Chart) - Focus score over sessions
-        const focusTrend = sessions.slice(-10).map(s => ({
-            date: new Date(s.sessionDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
-            focus: s.focusScore
-        }));
+        // 3. Focus Trend (Line/Area Chart) - Focus score over sessions (now uses test scores)
+        const focusTrend = sessions
+            .filter(s => s.testScore !== undefined)
+            .slice(-10)
+            .map(s => ({
+                date: new Date(s.sessionDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+                focus: parseFloat((s.testScore / 20).toFixed(1))
+            }));
 
-        // 4. Subject Mastery (Radar Chart) - Avg Focus per subject
+        // 4. Subject Mastery (Radar Chart) - Avg Test Performance per subject
         const subjectMasteryObj = {};
         sessions.forEach(s => {
-            if (!subjectMasteryObj[s.subject]) {
-                subjectMasteryObj[s.subject] = { sum: 0, count: 0 };
+            if (s.testScore !== undefined) {
+                if (!subjectMasteryObj[s.subject]) {
+                    subjectMasteryObj[s.subject] = { sum: 0, count: 0 };
+                }
+                subjectMasteryObj[s.subject].sum += (s.testScore / 20);
+                subjectMasteryObj[s.subject].count += 1;
             }
-            subjectMasteryObj[s.subject].sum += s.focusScore;
-            subjectMasteryObj[s.subject].count += 1;
         });
 
         const subjectMastery = Object.keys(subjectMasteryObj).map(key => ({
