@@ -2,7 +2,8 @@ import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, Sun, Moon, Settings as SettingsIcon, BookOpen, LayoutDashboard, Users, ListTree, Sparkles, Brain, Menu, X } from 'lucide-react';
+import { LogOut, Sun, Moon, Settings as SettingsIcon, BookOpen, LayoutDashboard, Users, ListTree, Sparkles, Brain, Menu, X, History } from 'lucide-react';
+import NotificationBell from './NotificationBell';
 
 const TopBar = () => {
     const { user, logout } = useContext(AuthContext);
@@ -68,6 +69,16 @@ const TopBar = () => {
                                     <Brain className="w-4 h-4 mr-2" />
                                     Flashcards
                                 </Link>
+                                <Link
+                                    to="/test-history"
+                                    className={`inline-flex items-center px-3 py-2 text-sm font-bold rounded-lg transition-colors ${location.pathname === '/test-history'
+                                        ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
+                                        : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'
+                                        }`}
+                                >
+                                    <History className="w-4 h-4 mr-2" />
+                                    Test History
+                                </Link>
 
                                 <Link
                                     to="/chatbot"
@@ -86,6 +97,7 @@ const TopBar = () => {
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block">
                             {user?.fullName}
                         </span>
+                        {user && <NotificationBell />}
                         <button
                             onClick={toggleTheme}
                             className="p-2 rounded-full text-gray-500 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 dark:text-gray-400 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
@@ -117,6 +129,7 @@ const TopBar = () => {
                             { to: '/dashboard', label: 'Tracker', icon: LayoutDashboard },
                             { to: '/classrooms', label: 'Classrooms', icon: Users },
                             { to: '/flashcards', label: 'Flashcards', icon: Brain },
+                            { to: '/test-history', label: 'Tests', icon: History },
                             { to: '/chatbot', label: 'AI Assistant', icon: Sparkles, color: 'text-primary-500' }
                         ].map((link) => {
                             const Icon = link.icon;

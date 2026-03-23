@@ -4,11 +4,8 @@ const {
     createSubject,
     bulkImportSubjects,
     getAllSubjects,
-    addTopicToSubject,
-    addSubtopicToTopic,
     deleteSubject,
-    deleteTopic,
-    deleteSubtopic
+    updateSubjectCurriculum
 } = require('../controllers/subjectController');
 const { createDepartment, getDepartments, deleteDepartment } = require('../controllers/departmentController');
 const { protectAdmin } = require('../middleware/authMiddleware');
@@ -20,10 +17,7 @@ router.get('/', getAllSubjects);
 router.post('/', createSubject);
 router.post('/bulk-import', bulkImportSubjects);
 router.delete('/:id', deleteSubject);
-router.post('/:id/topic', addTopicToSubject);
-router.delete('/:id/topic/:topicId', deleteTopic);
-router.post('/:id/subtopic', addSubtopicToTopic);
-router.delete('/:id/topic/:topicId/subtopic', deleteSubtopic);
+router.put('/:id', updateSubjectCurriculum);
 
 // Department CRUD (admin manages departments)
 router.get('/departments', getDepartments);

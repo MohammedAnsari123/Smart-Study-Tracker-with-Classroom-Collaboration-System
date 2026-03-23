@@ -21,6 +21,7 @@ const ChatbotView = () => {
     const [activeConversationId, setActiveConversationId] = useState(null);
     const [loadingHistory, setLoadingHistory] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [dbProfileContext, setDbProfileContext] = useState('');
     const messagesEndRef = useRef(null);
     const fileInputRef = useRef(null);
 
@@ -35,10 +36,21 @@ const ChatbotView = () => {
         scrollToBottom();
     }, [messages]);
 
-    // Load conversation history on mount
+    // Load conversation history and user study profile on mount
     useEffect(() => {
         fetchConversations();
+        fetchUserAIProfile();
     }, []);
+
+    const fetchUserAIProfile = async () => {
+        try {
+            const res = await axios.get('http://localhost:5000/api/ai/user-context', apiHeaders);
+            console.log("AI Context Profile Loaded:", res.data.contextPayload ? "Success" : "Empty");
+            setDbProfileContext(res.data.contextPayload);
+        } catch (error) {
+            console.error('Failed to fetch user AI context profile:', error);
+        }
+    };
 
     const fetchConversations = async () => {
         try {
@@ -97,10 +109,13 @@ const ChatbotView = () => {
         setLoading(true);
 
         try {
+            // Combine DB Profile context (Curriculum + User data limited to 6 months) with any uploaded PDF context
+            const fullContext = `${dbProfileContext}\n\n${pdfContext ? `PDF CONTENT:\n${pdfContext}` : ''}`;
+
             const res = await axios.post('http://localhost:8000/api/chat', {
                 message: input,
                 history: messages.slice(-5),
-                context: pdfContext
+                context: fullContext
             });
 
             const assistantMsg = { role: 'assistant', content: res.data.response };

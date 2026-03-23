@@ -1,3 +1,6 @@
+const axios = require('axios');
+const jwt = require('jsonwebtoken');
+const cloudinary = require('../config/cloudinary');
 const Assignment = require('../models/Assignment');
 const Submission = require('../models/Submission');
 const ClassMember = require('../models/ClassMember');
@@ -142,12 +145,92 @@ const updateAssignmentStatus = async (req, res) => {
     }
 };
 
+const proxyPDF = async (req, res) => {
+    const { url, token: queryToken } = req.query;
+    const token = queryToken || (req.headers.authorization && req.headers.authorization.split(' ')[1]);
+
+    if (!token) return res.status(401).json({ message: 'Authentication required' });
+
+    try {
+        // Verify token manually since we might be bypassing the 'protect' middleware for query-param access
+        jwt.verify(token, process.env.JWT_SECRET);
+
+        if (!url) return res.status(400).json({ message: 'URL is required' });
+
+        // More robust Cloudinary URL parsing
+        // Format: https://res.cloudinary.com/cloud_name/resource_type/type/vVersion/PublicID.ext
+        const urlObj = new URL(url);
+        const parts = urlObj.pathname.split('/');
+        
+        // Parts will look like ["", "cloud_name", "image", "upload", "v123", "folder", "id.pdf"]
+        const cloudName = parts[1];
+        const resourceType = parts[2];
+        const type = parts[3];
+        
+        // Find where the publicId starts (it's after the version, which starts with 'v')
+        let versionIdx = -1;
+        for (let i = 4; i < parts.length; i++) {
+            if (parts[i].startsWith('v') && /^\d+$/.test(parts[i].substring(1))) {
+                versionIdx = i;
+                break;
+            }
+        }
+        
+        let publicId = '';
+        if (versionIdx !== -1) {
+            // Join everything after version and remove extension
+            const idWithExt = parts.slice(versionIdx + 1).join('/');
+            publicId = idWithExt.substring(0, idWithExt.lastIndexOf('.'));
+        } else {
+            // No version? Skip type and join
+            const idWithExt = parts.slice(4).join('/');
+            publicId = idWithExt.substring(0, idWithExt.lastIndexOf('.'));
+        }
+
+        console.log(`[PDF Proxy] Parsed PublicId: ${publicId}, ResourceType: ${resourceType}`);
+
+        // Generate an authenticated download URL using the SDK's private_download_url
+        // This is the most formal way to get a signed URL for a protected asset
+        const signedUrl = cloudinary.utils.private_download_url(publicId, 'pdf', {
+            resource_type: resourceType,
+            type: type,
+            expires_at: Math.floor(Date.now() / 1000) + 3600 // 1 hour
+        });
+
+        console.log(`[PDF Proxy] Generated Signed URL: ${signedUrl}`);
+
+        const response = await axios.get(signedUrl, { 
+            responseType: 'stream',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            }
+        });
+        
+        const contentType = response.headers['content-type'] || 'application/pdf';
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+
+        // Handle download parameter
+        if (req.query.download === 'true') {
+            const fileName = publicId.split('/').pop() + '.pdf';
+            res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+        } else {
+            res.setHeader('Content-Disposition', 'inline');
+        }
+        
+        response.data.pipe(res);
+    } catch (error) {
+        console.error('PDF Proxy Error:', error.message);
+        res.status(500).json({ message: 'Failed to access document for preview' });
+    }
+};
+
 module.exports = {
     createAssignment,
     getClassAssignments,
     submitAssignment,
     gradeSubmission,
     getAssignmentSubmissions,
-    updateAssignmentStatus
+    updateAssignmentStatus,
+    proxyPDF
 };
-

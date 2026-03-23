@@ -32,7 +32,7 @@ async def weakness_analysis(request: WeaknessRequest):
 @router.post("/generate-flashcards")
 async def generate_flashcards(request: FlashcardRequest):
     try:
-        cards = await ai_service.generate_flashcards(request.subject, request.topics)
+        cards = await ai_service.generate_flashcards(request.subject, request.topics, request.syllabus_context)
         return {"flashcards": cards}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -36,9 +36,9 @@ class AIService:
         current_system_prompt = self.system_prompt
         if context:
             current_system_prompt += (
-                f"\n\nStudy Context (from uploaded PDF):\n{context}\n\n"
-                "Use the above context to answer accurately if the user asks about it. "
-                "If the context is unrelated to the question, prioritize general academic knowledge."
+                f"\n\nPERSONAL ACADEMIC PROFILE & STUDY CONTEXT:\n{context}\n\n"
+                "Use the above profile/context (Curriculum, Flashcards, Sessions, Assignments) to answer accurately and personally. "
+                "If the user asks about their specific progress, flashcards, or study history, refer to this data."
             )
 
 
@@ -165,15 +165,18 @@ class AIService:
         except Exception as e:
             return {"error": str(e), "weaknesses": [], "overall_status": "Evaluation failed"}
 
-    async def generate_flashcards(self, subject: str, topics: list):
+    async def generate_flashcards(self, subject: str, topics: list, syllabus_context: str = ""):
         if not self.api_token:
             return []
 
         prompt = (
-            f"Generate a set of 10 high-quality flashcards for the subject '{subject}'. "
-            f"Use the following topics as context: {', '.join(topics)}. "
-            "For each flashcard, provide a clear 'question' and a concise 'answer'. "
-            "Focus on key concepts, definitions, and important facts. "
+            f"Generate a set of 10 high-quality flashcards for the subject '{subject}'.\n\n"
+            f"==== MANDATORY CURRICULUM CONTEXT ====\n{syllabus_context}\n======================================\n\n"
+            f"Use the following topics as secondary focus: {', '.join(topics)}.\n\n"
+            "CRITICAL RULES FOR FLASHCARD GENERATION:\n"
+            "1. ONLY generate flashcards that can be answered using the provided MANDATORY CURRICULUM CONTEXT.\n"
+            "2. Ensure the 'question' is clear and the 'answer' is concise and accurate according to the context.\n"
+            "3. DO NOT hallucinate facts or concepts outside the provided context.\n"
             "Return the response ONLY as a valid JSON array of objects in this format: "
             '[{"question": "What is X?", "answer": "X is Y."}, {"question": "Define Z.", "answer": "Z is A."}]'
         )
@@ -235,7 +238,12 @@ class AIService:
         prompt = (
             f"Generate a 10-question multiple-choice test for a student who just studied '{subject}' "
             f"focusing on the topic '{topic}'" + (f" and subtopic '{subtopic}'. " if subtopic else ". ") +
-            f"They studied for {duration} minutes. Notes: '{notes}'. "
+            f"They studied for {duration} minutes.\n\n"
+            f"==== MANDATORY CONTEXT & NOTES ====\n{notes}\n==================================\n\n"
+            "CRITICAL RULES FOR TEST GENERATION:\n"
+            "1. ONLY ask questions that can be definitively answered using the provided MANDATORY CONTEXT & NOTES.\n"
+            "2. DO NOT hallucinate concepts, theories, or facts outside of this strict boundary.\n"
+            "3. If the context is limited, create deep, analytical questions about the limited text rather than inventing new topics.\n"
             "For each question, provide the 'question', a list of 4 'options', and the exact string of the 'correctAnswer' (which must be exactly one of the options). "
             "Return the response ONLY as a valid JSON object in this format: "
             '{"questions": [{"question": "What is x?", "options": ["y", "z", "w", "x"], "correctAnswer": "x"}]}'

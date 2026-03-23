@@ -26,27 +26,28 @@ A mission-critical academic operating system that integrates classroom managemen
 The **Smart Study Tracker** bridges the gap between classroom administration and personal study habits. It provides a high-performance environment where students manage academic responsibilities and track learning progress through advanced AI insights and a standardized curriculum system.
 
 **Core Objectives:**
-- **Global Curriculum System:** Standardized subjects, topics, and subtopics sorted by Department and Semester.
-- **Classroom Collaboration:** Secure classroom environments with unique join codes.
-- **AI-Generated Testing:** Dynamic test generation based on curriculum topics with instant results.
-- **AI Analytics:** Data-driven weakness detection and study optimization.
-- **Academic Assistant:** 24/7 AI Tutor with persistent chat history and PDF context support.
+- **5-Level Global Curriculum:** Deeply nested subjects, chapters, topics, and subtopics with detailed academic descriptions.
+- **AI Academic Discovery:** Personalized assistant aware of the last 6 months of user study data and performance.
+- **Classroom Collaboration:** Secure environments with real-time assignment and progress tracking.
+- **AI-Generated Testing & Flashcards:** Strict syllabus-based material generation to prevent hallucinations.
+- **Academic Assistant:** 24/7 AI Tutor with persistent history, PDF support, and full curriculum awareness.
 
 ---
 
 ## 🚀 Key Features
 
-### 🎓 Global Curriculum & Department Management
-- **Centralized Curriculum:** Subjects are managed globally by admins, featuring Course Codes, Departments (CO, IF, IT, etc.), and Semesters (1-6).
+### 🎓 Global 5-Level Curriculum Management
+- **5-Layer Architecture:** Standardized data structure: Department -> Subject -> Chapter -> Topic -> Subtopic.
+- **Detailed Syllabus:** Subtopics include specialized descriptions/details used by the AI for precise material generation.
 - **Auto-Filtering:** Students automatically see subjects relevant to their registered Department and Semester.
-- **Admin Dashboard:** Powerful interface for creating departments and bulk-importing curriculum data via JSON.
+- **Admin Dashboard:** Bulk-import interface for standardized Computer Engineering curriculum (Sem 1-6).
 
-### 🎓 Classroom & Collaboration
+### 📅 Smart Notifications & Classroom Collaboration
+- **Deadline Alerts:** Targeted Red Alert Banner on the dashboard for unsubmitted assignments due within 48 hours.
 - **Multi-User Kanban System:** Revolutionary Trello-style workflow where students track individual progress (To-Do, In-Progress, Done) independently.
 - **Teacher Monitoring Hub:** Owners can view a "People" dashboard showing aggregated progress and detailed read-only views of any student's individual Kanban board.
-- **Announcement Portal:** Real-time information sharing and file attachments within classrooms.
 - **Assignment System:** Teachers post tasks with deadlines; students upload PDF submissions with status tracking.
-- **Grade Summary Dashboard:** Automated calculated grade summary in the sidebar using weighted progress and performance-based UI indicators.
+- **Grade Summary Dashboard:** Automated calculated grade summary using performance-based UI indicators.
 
 ### 📊 AI-Powered Analytics & Testing
 - **AI Test Engine:** Generates multiple-choice or descriptive questions instantly based on specific curriculum topics.
@@ -54,7 +55,9 @@ The **Smart Study Tracker** bridges the gap between classroom administration and
 - **Weakness Detection:** AI identifies tough topics based on session data, test results, and flashcard performance.
 - **Consistency Heatmap:** GitHub-style visualization of academic commitment over time.
 
-### 🤖 AI Tutor 2.0 (Persistent)
+### 🤖 AI Tutor 2.0 (Context-Aware)
+- **Academic Profile Integration:** The AI Assistant is aware of your last 6 months of study sessions, quiz scores, and flashcard progress.
+- **Full Curriculum Access:** Assistant answers are rooted in the official 5-level curriculum structure.
 - **Persistent Chat History:** Seamlessly resume past conversations with a dedicated history sidebar.
 - **Conversation Management:** Create, rename, and delete chat threads for organized learning.
 - **PDF Context Support:** Upload academic PDFs to chat specifically about their contents.
@@ -152,10 +155,11 @@ erDiagram
 - `GET /subject` - Auto-filters subjects by student's dept/semester.
 - `POST /bulk-import` - (Admin) Import curriculum JSON data.
 
-### 🤖 Chat (`/chat`)
-- `GET /` - Fetch all conversation titles for sidebar.
-- `POST /create` - Start a new persistent conversation.
-- `POST /message` - Add message to history and get AI response.
+### 🤖 AI & Discovery (`/api/ai`)
+- `GET /user-context` - Aggregates curriculum and 6-month user study profile for AI injection.
+- `POST /test/generate` - Strict syllabus-based test generation.
+- `POST /generate-flashcards` - Context-aware flashcard generation using curriculum details.
+- `POST /chat` - Interactive AI tutoring with persistent history and PDF support.
 
 ---
 

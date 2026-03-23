@@ -6,6 +6,7 @@ const Flashcard = require('../models/Flashcard');
 const Subject = require('../models/Subject');
 const Classroom = require('../models/Classroom');
 const { analyzeWeaknesses } = require('../utils/ai');
+const Notification = require('../models/Notification');
 
 const getPersonalAnalytics = async (req, res) => {
     try {
@@ -279,15 +280,22 @@ const getTimeOptimizationData = async (req, res) => {
 const getAssignmentRisk = async (req, res) => {
     try {
         const userId = req.user._id;
+        
+        // 1. Find classes the user is a member of
+        const memberships = await ClassMember.find({ userId: userId }).select('classId').lean();
+        const classroomIds = memberships.map(m => m.classId);
+
+        // 2. Find assignments in these classes and check if unsubmitted
         const assignments = await Assignment.find({
-            userId,
-            status: { $ne: 'done' },
-            deadline: { $gte: new Date() }
-        });
+            classId: { $in: classroomIds },
+            assignmentStatus: 'active'
+        }).lean();
 
+        const submissions = await Submission.find({ userId }).select('assignmentId').lean();
+        const submittedAssignmentIds = submissions.map(s => s.assignmentId.toString());
+
+        // 3. User study sessions for subject strength analysis
         const sessions = await StudySession.find({ userId });
-
-        // Calculate subject difficulty based on focus scores (inverse: low focus = high difficulty)
         const subjectStats = {};
         sessions.forEach(s => {
             if (s.testScore !== undefined) {
@@ -297,35 +305,64 @@ const getAssignmentRisk = async (req, res) => {
             }
         });
 
-        const risks = assignments.map(a => {
+        // 4. Calculate Risk & Status for ALL assignments
+        const risks = await Promise.all(assignments.map(async (a) => {
+            const isSubmitted = submittedAssignmentIds.includes(a._id.toString());
             const dueDate = new Date(a.deadline);
             const today = new Date();
             const timeDiff = dueDate - today;
             const daysLeft = Math.max(timeDiff / (1000 * 60 * 60 * 24), 0.1);
 
             const stats = subjectStats[a.subject];
-            const avgFocus = stats ? stats.totalFocus / stats.count : 3; // default medium difficulty (3 is neutral on 1-5)
-            const difficultyScale = (6 - avgFocus); // Low performance (1) -> 5 (Hard), High performance (5) -> 1 (Easy)
+            const avgFocus = stats ? stats.totalFocus / stats.count : 3; 
+            const difficultyScale = (6 - avgFocus); 
 
             const riskScore = (difficultyScale / daysLeft) * 10;
 
             let riskLevel = 'Low';
-            if (riskScore > 15) riskLevel = 'High';
+            if (daysLeft <= 2) riskLevel = 'Critical';
+            else if (riskScore > 15) riskLevel = 'High';
             else if (riskScore > 7) riskLevel = 'Medium';
+
+            const isUrgent = daysLeft <= 2 && !isSubmitted;
+
+            if (isUrgent) {
+                try {
+                    const existingNotif = await Notification.findOne({
+                        userId: req.user._id,
+                        message: { $regex: a.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') },
+                        type: 'assignment'
+                    });
+                    
+                    if (!existingNotif) {
+                        await Notification.create({
+                            userId: req.user._id,
+                            message: `Urgent: Assignment "${a.title}" is due soon! (in ${daysLeft.toFixed(1)} days)`,
+                            type: 'assignment',
+                            link: `/class/${a.classId}`
+                        });
+                    }
+                } catch (err) {
+                    console.error("Auto-notification failed:", err);
+                }
+            }
 
             return {
                 id: a._id,
                 title: a.title,
-                subject: a.subject,
+                classId: a.classId,
+                subject: a.subject || 'General',
                 dueDate: a.deadline,
-                daysLeft: Math.round(daysLeft),
+                daysLeft: Math.ceil(daysLeft),
                 riskLevel,
-                riskScore: Math.round(riskScore)
+                isUrgent: isUrgent,
+                isSubmitted: isSubmitted
             };
-        });
+        }));
 
         res.json(risks);
     } catch (error) {
+        console.error('Assignment Risk Error:', error);
         res.status(500).json({ message: error.message });
     }
 };

@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { X, Download, FileCheck, AlertCircle } from 'lucide-react';
+import { X, Download, FileCheck, AlertCircle, Eye } from 'lucide-react';
+import PDFPreviewModal from './PDFPreviewModal';
+import { getProxyURL } from '../utils/proxyHelper';
 
 const SubmissionsModal = ({ isOpen, onClose, assignment, onGradeClick }) => {
     const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [previewFileData, setPreviewFileData] = useState(null); // { url, title }
 
     const fetchSubmissions = async () => {
         if (!assignment) return;
@@ -96,14 +99,22 @@ const SubmissionsModal = ({ isOpen, onClose, assignment, onGradeClick }) => {
 
                                     <div className="flex gap-3 shrink-0 w-full sm:w-auto">
                                         <a
-                                            href={sub.fileURL}
+                                            href={getProxyURL(sub.fileURL, true)}
+                                            download
                                             target="_blank"
                                             rel="noreferrer"
                                             className="flex-1 sm:flex-none flex items-center justify-center p-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition shadow-sm"
-                                            title="View Submission"
+                                            title="Download Submission"
                                         >
                                             <Download className="w-5 h-5" />
                                         </a>
+                                        <button 
+                                            onClick={() => setPreviewFileData({ url: sub.fileURL, title: `${sub.userId?.fullName}'s Submission` })}
+                                            className="flex-1 sm:flex-none flex items-center justify-center p-3 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 rounded-xl hover:bg-primary-100 transition shadow-sm"
+                                            title="Preview Submission"
+                                        >
+                                            <Eye className="w-5 h-5" />
+                                        </button>
                                         <button
                                             onClick={() => onGradeClick(sub)}
                                             className="flex-[2] sm:flex-none inline-flex items-center justify-center px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-bold transition shadow-lg shadow-primary-500/20"
@@ -118,6 +129,14 @@ const SubmissionsModal = ({ isOpen, onClose, assignment, onGradeClick }) => {
                     )}
                 </div>
             </div>
+
+            {/* PDF Preview Modal */}
+            <PDFPreviewModal 
+                isOpen={!!previewFileData}
+                onClose={() => setPreviewFileData(null)}
+                fileURL={previewFileData?.url}
+                title={previewFileData?.title}
+            />
         </div>
     );
 };

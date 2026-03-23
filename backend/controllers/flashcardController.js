@@ -74,13 +74,31 @@ const generateAIFlashcards = async (req, res) => {
         const subject = await Subject.findById(subjectId);
         if (!subject) return res.status(404).json({ message: 'Subject not found' });
 
-        const topics = subject.topics.map(t => t.topicName);
-        console.log(`Generating flashcards for Subject: ${subject.subjectName} with topics: ${topics.join(', ')}`);
+        // Build detailed 5-level syllabus tree
+        let syllabusContext = `SUBJECT: ${subject.subjectName} (${subject.courseCode || 'N/A'})\n`;
+        let topics = [];
+        
+        if (subject.chapters) {
+            subject.chapters.forEach(chap => {
+                syllabusContext += `Chapter: ${chap.chapterName}\n`;
+                chap.topics?.forEach(top => {
+                    topics.push(top.topicName);
+                    syllabusContext += `  - Topic: ${top.topicName}\n`;
+                    top.subtopics?.forEach(sub => {
+                        syllabusContext += `    - Subtopic: ${sub.name}\n`;
+                        if (sub.details) syllabusContext += `      Content/Details: ${sub.details}\n`;
+                    });
+                });
+            });
+        }
+
+        console.log(`Generating flashcards for Subject: ${subject.subjectName} using detailed curriculum context.`);
 
         // Call Python AI Service
         const aiResponse = await axios.post('http://127.0.0.1:8000/api/generate-flashcards', {
             subject: subject.subjectName,
-            topics: topics
+            topics: topics,
+            syllabus_context: syllabusContext
         });
 
         console.log('AI Service Response status:', aiResponse.status);

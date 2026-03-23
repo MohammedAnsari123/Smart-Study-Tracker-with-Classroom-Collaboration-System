@@ -43,7 +43,16 @@ const LogStudySessionModal = ({ isOpen, onClose, onSessionLogged }) => {
             topic: '',
             subtopic: ''
         });
-        setAvailableTopics(subjectObj ? subjectObj.topics : []);
+        
+        let allTopics = [];
+        if (subjectObj && subjectObj.chapters) {
+            allTopics = subjectObj.chapters.reduce((acc, chap) => acc.concat(chap.topics || []), []);
+        } else if (subjectObj && subjectObj.topics) {
+            // Fallback for any legacy data
+            allTopics = subjectObj.topics;
+        }
+        
+        setAvailableTopics(allTopics);
         setAvailableSubtopics([]);
     };
 
@@ -145,7 +154,9 @@ const LogStudySessionModal = ({ isOpen, onClose, onSessionLogged }) => {
                                 className="mt-1 block w-full rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary-500 h-12 px-4 disabled:opacity-50 font-bold"
                             >
                                 <option value="">None</option>
-                                {availableSubtopics.map((s, idx) => <option key={idx} value={s}>{s}</option>)}
+                                {availableSubtopics.map((s, idx) => (
+                                    <option key={idx} value={s.name || s}>{s.name || s}</option>
+                                ))}
                             </select>
                         </div>
 

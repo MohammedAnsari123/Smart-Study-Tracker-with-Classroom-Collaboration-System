@@ -24,6 +24,7 @@ class WeaknessRequest(BaseModel):
 class FlashcardRequest(BaseModel):
     subject: str
     topics: List[str]
+    syllabus_context: Optional[str] = ""
 
 class TestRequest(BaseModel):
     subject: str

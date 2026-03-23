@@ -6,7 +6,8 @@ const {
     submitAssignment,
     gradeSubmission,
     getAssignmentSubmissions,
-    updateAssignmentStatus
+    updateAssignmentStatus,
+    proxyPDF
 } = require('../controllers/assignmentController');
 const { protect } = require('../middleware/authMiddleware');
 const { requireOwner } = require('../middleware/ownerMiddleware');
@@ -17,6 +18,10 @@ router.post('/class/:classId/create', protect, requireOwner, upload.single('file
 
 // Update assignment status (Kanban)
 router.patch('/:id/status', protect, updateAssignmentStatus);
+
+// Proxy PDF for preview (resolves 401/CORS issues)
+// No middleware here because we handle token verification inside for query-param support
+router.get('/proxy-pdf', proxyPDF);
 
 
 // Get all assignments for a class

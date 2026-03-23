@@ -126,7 +126,7 @@ const Flashcards = () => {
                                 </div>
                                 <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-2">{sub.subjectName}</h3>
                                 <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                                    {sub.topics?.length || 0} Core Topics • Click to manage cards
+                                    {sub.chapters ? sub.chapters.reduce((acc, chap) => acc + (chap.topics?.length || 0), 0) : (sub.topics?.length || 0)} Core Topics • Click to manage cards
                                 </p>
                             </button>
                         ))}

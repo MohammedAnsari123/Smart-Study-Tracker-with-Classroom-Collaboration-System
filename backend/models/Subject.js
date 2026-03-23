@@ -5,10 +5,24 @@ const subjectSchema = new mongoose.Schema({
     semester: { type: Number, required: true },
     courseCode: { type: String, required: true },
     subjectName: { type: String, required: true },
-    topics: [
+    description: { type: String },
+    chapters: [
         {
-            topicName: { type: String, required: true },
-            subtopics: [{ type: String }]
+            chapterName: { type: String, required: true },
+            description: { type: String },
+            topics: [
+                {
+                    topicName: { type: String, required: true },
+                    description: { type: String },
+                    subtopics: [
+                        {
+                            name: { type: String, required: true },
+                            description: { type: String },
+                            details: { type: String }
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }, { timestamps: true });

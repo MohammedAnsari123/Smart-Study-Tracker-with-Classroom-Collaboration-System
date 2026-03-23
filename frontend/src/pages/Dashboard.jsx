@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import TopBar from '../components/TopBar';
 import LogStudySessionModal from '../components/LogStudySessionModal';
 import PomodoroTimer from '../components/PomodoroTimer';
 import ConceptHeatmap from '../components/ConceptHeatmap';
 import AITestModal from '../components/tracker/AITestModal';
 
-import { TrendingUp, Clock, AlertCircle, PlusCircle, History, Calendar, Star, ChevronRight, BookOpen, Target, Activity, Brain, Zap } from 'lucide-react';
+import { TrendingUp, Clock, AlertCircle, PlusCircle, History, Calendar, Star, ChevronRight, BookOpen, Target, Activity, Brain, Zap, CheckCircle } from 'lucide-react';
 import {
     PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
     BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -17,6 +18,7 @@ import {
 
 const Dashboard = () => {
     const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
     const [sessions, setSessions] = useState([]);
     const [stats, setStats] = useState(null);
     const [weaknessReport, setWeaknessReport] = useState(null);
@@ -159,6 +161,34 @@ const Dashboard = () => {
                                 Log Session
                             </button>
                         </div>
+
+                        {/* Urgent Assignment Alert */}
+                        {assignmentRisks.some(r => r.isUrgent) && (
+                            <div className="bg-red-600 text-white p-6 rounded-3xl shadow-xl shadow-red-500/20 flex items-center justify-between animate-in fade-in slide-in-from-top-4 duration-500">
+                                <div className="flex items-center gap-4">
+                                    <div className="bg-white/20 p-3 rounded-2xl">
+                                        <AlertCircle className="w-8 h-8" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-black uppercase tracking-widest text-xs opacity-80">Deadline Alert</h3>
+                                        <p className="font-bold text-lg">You have assignments due in less than 48 hours!</p>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={() => {
+                                        const urgent = assignmentRisks.find(r => r.isUrgent);
+                                        if (urgent && urgent.classId) {
+                                            navigate(`/class/${urgent.classId}`);
+                                        } else {
+                                            navigate('/classrooms');
+                                        }
+                                    }} 
+                                    className="px-6 py-3 bg-white text-red-600 rounded-2xl font-black text-sm transition hover:bg-red-50 whitespace-nowrap"
+                                >
+                                    Review Now
+                                </button>
+                            </div>
+                        )}
 
                         {/* Top Stats Row */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -332,10 +362,10 @@ const Dashboard = () => {
                             )}
                         </div>
 
-                        {/* Assignment Risk Predictor */}
-                        <div className="bg-white dark:bg-darkCard p-8 rounded-3xl border border-orange-100 dark:border-orange-900/30 shadow-sm transition-all hover:scale-[1.01]">
+                        {/* Academic Assignments */}
+                        <div className="bg-white dark:bg-darkCard p-8 rounded-3xl border border-primary-100 dark:border-primary-900/30 shadow-sm transition-all">
                             <h3 className="font-bold text-gray-900 dark:text-white flex items-center mb-6">
-                                <Target className="w-5 h-5 mr-2 text-orange-500" /> Assignment Risk
+                                <Target className="w-5 h-5 mr-2 text-primary-500" /> Academic Assignments
                             </h3>
                             {loadingAI ? (
                                 <div className="space-y-4 animate-pulse">
@@ -350,23 +380,35 @@ const Dashboard = () => {
                                     ))}
                                 </div>
                             ) : assignmentRisks.length > 0 ? (
-                                <div className="space-y-4">
-                                    {assignmentRisks.slice(0, 3).map((risk, idx) => (
-                                        <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-800/30 rounded-2xl transition-colors hover:bg-gray-100/50">
-                                            <div>
-                                                <p className="font-bold text-gray-900 dark:text-white text-sm">{risk.title}</p>
-                                                <p className="text-[10px] text-gray-500 uppercase font-black mt-0.5">{risk.subject} • {risk.daysLeft} days left</p>
+                                <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                                    {assignmentRisks.sort((a, b) => a.isSubmitted - b.isSubmitted).map((assignment, idx) => (
+                                        <div key={idx} className={`flex items-center justify-between p-4 rounded-2xl transition-all ${assignment.isSubmitted ? 'bg-green-50/30 dark:bg-green-900/5 opacity-80' : 'bg-gray-50 dark:bg-slate-800/30 hover:bg-gray-100/50'}`}>
+                                            <div className="flex-1 min-w-0 mr-4">
+                                                <p className={`font-bold text-sm truncate ${assignment.isSubmitted ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-gray-900 dark:text-white'}`}>
+                                                    {assignment.title}
+                                                </p>
+                                                <p className="text-[10px] text-gray-500 uppercase font-black mt-0.5">
+                                                    {assignment.subject} • {assignment.isSubmitted ? 'Completed' : `${assignment.daysLeft} days left`}
+                                                </p>
                                             </div>
-                                            <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${risk.riskLevel === 'High' ? 'bg-red-100 text-red-600' :
-                                                risk.riskLevel === 'Medium' ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600'
-                                                }`}>
-                                                {risk.riskLevel}
+                                            <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex-shrink-0 ${
+                                                assignment.isSubmitted ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                                                (assignment.riskLevel === 'High' || assignment.riskLevel === 'Critical') ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
+                                                assignment.riskLevel === 'Medium' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
+                                                'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                                            }`}>
+                                                {assignment.isSubmitted ? 'Done' : (assignment.riskLevel === 'Critical' ? 'Urgent' : assignment.riskLevel)}
                                             </div>
                                         </div>
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-sm text-gray-500 italic text-center py-4">No high-risk assignments detected.</p>
+                                <div className="text-center py-6">
+                                    <div className="w-12 h-12 bg-gray-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <CheckCircle className="w-6 h-6 text-gray-300" />
+                                    </div>
+                                    <p className="text-xs text-gray-500 font-medium">All caught up! No active assignments.</p>
+                                </div>
                             )}
                         </div>
 

@@ -94,12 +94,12 @@ const TestResults = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-darkBg font-sans text-gray-900 dark:text-gray-100 flex flex-col hidden-scrollbar pb-20">
             <TopBar />
 
-            <div className="container mx-auto px-6 pt-10 pb-6 max-w-4xl">
+            <div className="container mx-auto px-6 pt-10 pb-6 w-[85vw] max-w-full">
                 <button 
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => navigate('/test-history')}
                     className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors mb-8 bg-white dark:bg-slate-800 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 w-fit"
                 >
-                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Test History
                 </button>
 
                 <div className="bg-white dark:bg-darkCard rounded-3xl p-8 shadow-sm border border-gray-200 dark:border-gray-800 mb-8 relative overflow-hidden">
@@ -149,72 +149,74 @@ const TestResults = () => {
                     </div>
                 </div>
 
-                <div className="space-y-6">
-                    <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-gray-100 flex items-center px-2">
-                        Detailed Analysis 
-                        <span className="ml-3 text-sm font-bold bg-primary-100 dark:bg-primary-900/30 text-primary-600 px-3 py-1 rounded-full">
-                            {testData.questions.length} Questions
-                        </span>
-                    </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="col-span-full mb-2">
+                        <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-gray-100 flex items-center px-2">
+                            Detailed Analysis 
+                            <span className="ml-3 text-sm font-bold bg-primary-100 dark:bg-primary-900/30 text-primary-600 px-3 py-1 rounded-full">
+                                {testData.questions.length} Questions
+                            </span>
+                        </h3>
+                    </div>
 
                     {testData.questions.map((q, qIndex) => {
                         return (
-                            <div key={qIndex} className={`p-6 md:p-8 rounded-2xl transition-all border ${
+                            <div key={qIndex} className={`p-5 rounded-2xl transition-all border flex flex-col h-full ${
                                 q.isCorrect 
                                     ? 'bg-white dark:bg-slate-800/80 border-green-200 dark:border-green-900/30 relative overflow-hidden' 
                                     : 'bg-white dark:bg-slate-800/80 border-red-200 dark:border-red-900/30 relative overflow-hidden'
                             } shadow-sm`}>
                                 
-                                <div className="flex gap-4 items-start relative z-10">
-                                    <div className={`w-8 h-8 shrink-0 rounded-lg flex items-center justify-center font-black text-sm text-white ${
-                                        q.isCorrect ? 'bg-green-500' : 'bg-red-500'
-                                    }`}>
-                                        {qIndex + 1}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h4 className="text-base font-bold text-gray-900 dark:text-white leading-relaxed mb-6">
+                                <div className="flex flex-col h-full relative z-10">
+                                    <div className="flex items-center gap-3 mb-4 shrink-0">
+                                        <div className={`w-8 h-8 shrink-0 rounded-lg flex items-center justify-center font-black text-sm text-white ${
+                                            q.isCorrect ? 'bg-green-500' : 'bg-red-500'
+                                        }`}>
+                                            {qIndex + 1}
+                                        </div>
+                                        <h4 className="text-sm font-bold text-gray-900 dark:text-white leading-snug line-clamp-3" title={q.question}>
                                             {q.question}
                                         </h4>
-                                        <div className="space-y-3">
-                                            {q.options.map((option, oIndex) => {
-                                                const isSelected = option === q.userAnswer;
-                                                const isActualCorrect = option === q.correctAnswer;
-                                                
-                                                let optionClasses = "w-full text-left p-4 rounded-xl border relative overflow-hidden cursor-default transition-all ";
-                                                
-                                                if (isActualCorrect) {
-                                                    optionClasses += "bg-green-50 dark:bg-green-900/20 border-green-500 text-green-700 dark:text-green-300 font-bold shadow-sm";
-                                                } else if (isSelected && !isActualCorrect) {
-                                                    optionClasses += "bg-red-50 dark:bg-red-900/20 border-red-400 text-red-700 dark:text-red-400 opacity-80";
-                                                } else {
-                                                    optionClasses += "bg-gray-50 dark:bg-slate-800/50 border-transparent text-gray-500 dark:text-gray-400";
-                                                }
-
-                                                return (
-                                                    <div key={oIndex} className={optionClasses}>
-                                                        <div className="flex items-center">
-                                                            <div className={`w-5 h-5 shrink-0 rounded-full mr-3 flex items-center justify-center
-                                                                ${isActualCorrect ? 'bg-green-500 text-white' : ''}
-                                                                ${isSelected && !isActualCorrect ? 'bg-red-400 text-white' : ''}
-                                                                ${!isSelected && !isActualCorrect ? 'bg-gray-200 dark:bg-gray-700' : ''}
-                                                            `}>
-                                                                {isActualCorrect && <CheckCircle className="w-3 h-3 text-white" />}
-                                                                {isSelected && !isActualCorrect && <XCircle className="w-3 h-3 text-white" />}
-                                                            </div>
-                                                            <span className="text-sm ${isSelected && !isActualCorrect ? 'line-through' : ''}">{option}</span>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-
-                                        {!q.userAnswer && (
-                                            <div className="mt-4 inline-flex items-center px-3 py-1.5 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-lg text-xs font-bold border border-orange-100 dark:border-orange-900/30">
-                                                <AlertTriangle className="w-3.5 h-3.5 mr-1.5" />
-                                                Unanswered
-                                            </div>
-                                        )}
                                     </div>
+                                    <div className="flex-1 flex flex-col gap-2">
+                                        {q.options.map((option, oIndex) => {
+                                            const isSelected = option === q.userAnswer;
+                                            const isActualCorrect = option === q.correctAnswer;
+                                            
+                                            let optionClasses = "w-full text-left p-3 rounded-xl border relative overflow-hidden cursor-default transition-all flex-1 flex items-center ";
+                                            
+                                            if (isActualCorrect) {
+                                                optionClasses += "bg-green-50 dark:bg-green-900/20 border-green-500 text-green-700 dark:text-green-300 font-bold shadow-sm";
+                                            } else if (isSelected && !isActualCorrect) {
+                                                optionClasses += "bg-red-50 dark:bg-red-900/20 border-red-400 text-red-700 dark:text-red-400 font-medium opacity-90";
+                                            } else {
+                                                optionClasses += "bg-gray-50 dark:bg-slate-800/50 border-transparent text-gray-500 dark:text-gray-400 text-sm";
+                                            }
+
+                                            return (
+                                                <div key={oIndex} className={optionClasses}>
+                                                    <div className="flex items-start w-full gap-2">
+                                                        <div className={`w-4 h-4 mt-0.5 shrink-0 rounded-full flex items-center justify-center
+                                                            ${isActualCorrect ? 'bg-green-500 text-white' : ''}
+                                                            ${isSelected && !isActualCorrect ? 'bg-red-400 text-white' : ''}
+                                                            ${!isSelected && !isActualCorrect ? 'bg-gray-200 dark:bg-gray-700' : ''}
+                                                        `}>
+                                                            {isActualCorrect && <CheckCircle className="w-2.5 h-2.5 text-white" />}
+                                                            {isSelected && !isActualCorrect && <XCircle className="w-2.5 h-2.5 text-white" />}
+                                                        </div>
+                                                        <span className={`text-xs leading-snug break-words flex-1 ${isSelected && !isActualCorrect ? 'line-through opacity-70' : ''}`}>{option}</span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {!q.userAnswer && (
+                                        <div className="mt-4 shrink-0 inline-flex items-center px-3 py-1.5 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-lg text-xs font-bold border border-orange-100 dark:border-orange-900/30">
+                                            <AlertTriangle className="w-3.5 h-3.5 mr-1.5" />
+                                            Unanswered
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         );

@@ -86,26 +86,12 @@ const getAllSubjects = async (req, res) => {
     }
 };
 
-const addTopicToSubject = async (req, res) => {
+const updateSubjectCurriculum = async (req, res) => {
     try {
-        const { topicName } = req.body;
+        const { chapters, description } = req.body;
         const subject = await Subject.findOneAndUpdate(
             { _id: req.params.id },
-            { $push: { topics: { topicName, subtopics: [] } } },
-            { new: true }
-        );
-        res.json(subject);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const addSubtopicToTopic = async (req, res) => {
-    try {
-        const { topicId, subtopicName } = req.body;
-        const subject = await Subject.findOneAndUpdate(
-            { _id: req.params.id, "topics._id": topicId },
-            { $push: { "topics.$.subtopics": subtopicName } },
+            { $set: { chapters, description } },
             { new: true }
         );
         res.json(subject);
@@ -116,38 +102,8 @@ const addSubtopicToTopic = async (req, res) => {
 
 const deleteSubject = async (req, res) => {
     try {
-        const subject = await Subject.findOneAndDelete({ _id: req.params.id });
-        if (!subject) return res.status(404).json({ message: 'Subject not found' });
-        res.json({ message: 'Subject deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const deleteTopic = async (req, res) => {
-    try {
-        const { topicId } = req.params;
-        const subject = await Subject.findOneAndUpdate(
-            { _id: req.params.id },
-            { $pull: { topics: { _id: topicId } } },
-            { new: true }
-        );
-        res.json(subject);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const deleteSubtopic = async (req, res) => {
-    try {
-        const { topicId } = req.params;
-        const { subtopicName } = req.body;
-        const subject = await Subject.findOneAndUpdate(
-            { _id: req.params.id, "topics._id": topicId },
-            { $pull: { "topics.$.subtopics": subtopicName } },
-            { new: true }
-        );
-        res.json(subject);
+        await Subject.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Subject removed successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -158,9 +114,6 @@ module.exports = {
     bulkImportSubjects,
     getUserSubjects,
     getAllSubjects,
-    addTopicToSubject,
-    addSubtopicToTopic,
-    deleteSubject,
-    deleteTopic,
-    deleteSubtopic
+    updateSubjectCurriculum,
+    deleteSubject
 };

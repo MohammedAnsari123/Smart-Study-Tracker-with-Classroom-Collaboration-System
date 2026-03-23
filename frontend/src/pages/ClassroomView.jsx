@@ -9,9 +9,11 @@ import SubmitAssignmentModal from '../components/SubmitAssignmentModal';
 import SubmissionsModal from '../components/SubmissionsModal';
 import GradeSubmissionModal from '../components/GradeSubmissionModal';
 import KanbanBoard from '../components/KanbanBoard';
-import { MessageSquare, FileText, Plus, Calendar, Paperclip, Download, Users, BarChart3, Layout, List, Award } from 'lucide-react';
+import { MessageSquare, FileText, Plus, Calendar, Paperclip, Download, Users, BarChart3, Layout, List, Award, Eye } from 'lucide-react';
+import PDFPreviewModal from '../components/PDFPreviewModal';
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
+import { getProxyURL } from '../utils/proxyHelper';
 
 const ClassroomView = () => {
     const { id } = useParams();
@@ -29,6 +31,7 @@ const ClassroomView = () => {
     const [gradeSubmissionData, setGradeSubmissionData] = useState(null);
     const [selectedStudent, setSelectedStudent] = useState(null); // { user, progress }
     const [viewMode, setViewMode] = useState('list'); // 'list' or 'kanban'
+    const [previewFileData, setPreviewFileData] = useState(null); // { url, title }
     const [progress, setProgress] = useState([]);
     const [allStudentsProgress, setAllStudentsProgress] = useState([]);
     const [classMembers, setClassMembers] = useState([]);
@@ -298,11 +301,18 @@ const ClassroomView = () => {
                                                     <p className="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-wrap mt-2">{ann.message}</p>
 
                                                     {ann.attachmentURL && (
-                                                        <div className="mt-4">
-                                                            <a href={ann.attachmentURL} target="_blank" rel="noreferrer" className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                                                        <div className="mt-4 flex gap-2">
+                                                            <a href={getProxyURL(ann.attachmentURL, true)} download target="_blank" rel="noreferrer" className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
                                                                 <Paperclip className="w-4 h-4 mr-2 text-gray-500" />
-                                                                View Attachment
+                                                                Download
                                                             </a>
+                                                            <button 
+                                                                onClick={() => setPreviewFileData({ url: ann.attachmentURL, title: 'Announcement Attachment' })}
+                                                                className="inline-flex items-center px-4 py-2 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 rounded-lg text-sm font-medium hover:bg-primary-100 transition"
+                                                            >
+                                                                <Eye className="w-4 h-4 mr-2" />
+                                                                Preview
+                                                            </button>
                                                         </div>
                                                     )}
                                                 </div>
@@ -389,9 +399,18 @@ const ClassroomView = () => {
 
                                                         <div className="flex flex-col gap-2 w-full sm:w-auto">
                                                             {assignment.pdfURL && (
-                                                                <a href={assignment.pdfURL} target="_blank" rel="noreferrer" className="inline-flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                                                                    <Download className="w-4 h-4 mr-2" /> material.pdf
-                                                                </a>
+                                                                <div className="flex gap-2">
+                                                                    <a href={getProxyURL(assignment.pdfURL, true)} download target="_blank" rel="noreferrer" className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition" title="Download Material">
+                                                                        <Download className="w-4 h-4" /> 
+                                                                    </a>
+                                                                    <button 
+                                                                        onClick={() => setPreviewFileData({ url: assignment.pdfURL, title: assignment.title })}
+                                                                        className="flex-1 inline-flex justify-center items-center px-4 py-2 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-md text-sm font-medium hover:bg-primary-100 transition"
+                                                                        title="Preview Material"
+                                                                    >
+                                                                        <Eye className="w-4 h-4" />
+                                                                    </button>
+                                                                </div>
                                                             )}
                                                             {!isOwner && (
                                                                 <button
@@ -515,8 +534,8 @@ const ClassroomView = () => {
                             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center">
                                 <BarChart3 className="w-5 h-5 mr-2 text-primary-500" /> Class Performance
                             </h2>
-                            <div className="bg-white dark:bg-darkCard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 h-64">
-                                <ResponsiveContainer width="100%" height="100%">
+                            <div className="bg-white dark:bg-darkCard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 h-64 overflow-hidden">
+                                <ResponsiveContainer width="99%" height={200}>
                                     <BarChart data={assignments.map(a => ({ name: a.title, marks: a.maxMarks }))}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#374151" opacity={0.1} />
                                         <XAxis dataKey="name" hide />
@@ -612,6 +631,13 @@ const ClassroomView = () => {
                 )
             }
 
+            {/* PDF Preview Modal */}
+            <PDFPreviewModal
+                isOpen={!!previewFileData}
+                onClose={() => setPreviewFileData(null)}
+                fileURL={previewFileData?.url}
+                title={previewFileData?.title}
+            />
         </div >
     );
 };

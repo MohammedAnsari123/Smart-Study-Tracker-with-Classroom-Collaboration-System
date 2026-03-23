@@ -4,69 +4,88 @@
     "semester": 5,
     "courseCode": "315323",
     "subjectName": "Software Engineering",
-    "topics": [
+    "description": "This subject focuses on systematic and structured approaches to software development, including lifecycle models, requirement engineering, system design, estimation, and project management.",
+    "chapters": [
       {
-        "topicName": "Software Development Process",
-        "subtopics": [
-          "Software characteristics",
-          "Software engineering layered approach",
-          "Software development life cycle",
-          "Waterfall model",
-          "RAD model",
-          "Spiral model",
-          "Agile model",
-          "Scrum methodology",
-          "Extreme programming"
+        "chapterName": "Software Development Process",
+        "description": "Covers different models used to develop software systems in a structured manner.",
+        "topics": [
+          {
+            "topicName": "SDLC Models",
+            "description": "Software Development Life Cycle models define how software is developed step by step.",
+            "subtopics": [
+              {
+                "name": "Waterfall Model",
+                "description": "A linear and sequential model.",
+                "details": "Development flows in fixed phases such as requirement, design, coding, testing, and maintenance. Each phase must be completed before moving forward. It is simple but not flexible for changing requirements."
+              },
+              {
+                "name": "Agile Model",
+                "description": "An iterative and flexible model.",
+                "details": "Software is developed in small cycles called sprints. Continuous feedback is taken, and changes can be easily incorporated. It is widely used in modern development."
+              },
+              {
+                "name": "Spiral Model",
+                "description": "A risk-based iterative model.",
+                "details": "Each iteration involves planning, risk analysis, development, and evaluation. It is suitable for complex and high-risk projects."
+              }
+            ]
+          }
         ]
       },
       {
-        "topicName": "Requirement Engineering",
-        "subtopics": [
-          "Requirement gathering",
-          "Requirement analysis",
-          "Functional requirements",
-          "Non functional requirements",
-          "Requirement elicitation",
-          "Use case development",
-          "Requirement validation",
-          "Software Requirement Specification"
+        "chapterName": "Requirement Engineering",
+        "description": "Focuses on gathering, analyzing, and documenting system requirements.",
+        "topics": [
+          {
+            "topicName": "Requirement Types",
+            "description": "Defines different categories of requirements.",
+            "subtopics": [
+              {
+                "name": "Functional Requirements",
+                "description": "Define system behavior.",
+                "details": "Examples include user login, assignment submission, data processing, and report generation."
+              },
+              {
+                "name": "Non Functional Requirements",
+                "description": "Define system constraints.",
+                "details": "Includes performance, security, scalability, and usability requirements."
+              }
+            ]
+          },
+          {
+            "topicName": "SRS Document",
+            "description": "Formal documentation of requirements.",
+            "subtopics": [
+              {
+                "name": "Structure of SRS",
+                "description": "Standard SRS format.",
+                "details": "Includes introduction, overall description, functional requirements, non-functional requirements, and external interfaces."
+              }
+            ]
+          }
         ]
       },
       {
-        "topicName": "Software Modeling",
-        "subtopics": [
-          "Analysis modeling",
-          "Design modeling",
-          "Data flow diagram",
-          "Decision tables",
-          "Structure charts",
-          "UML diagrams",
-          "Use case diagram",
-          "Class diagram",
-          "Sequence diagram"
-        ]
-      },
-      {
-        "topicName": "Project Cost Estimation",
-        "subtopics": [
-          "Project metrics",
-          "Lines of code estimation",
-          "Function point estimation",
-          "Heuristic estimation",
-          "Empirical estimation",
-          "COCOMO model",
-          "Risk identification",
-          "Risk management"
-        ]
-      },
-      {
-        "topicName": "Project Management",
-        "subtopics": [
-          "Work breakdown structure",
-          "Project scheduling",
-          "Gantt chart",
-          "Critical path method",
-          "PERT technique"
+        "chapterName": "Project Management",
+        "description": "Focuses on planning and managing software projects.",
+        "topics": [
+          {
+            "topicName": "Project Scheduling",
+            "description": "Techniques to plan project timelines.",
+            "subtopics": [
+              {
+                "name": "Gantt Chart",
+                "description": "Visual timeline tool.",
+                "details": "Displays project tasks against time, showing start and end dates."
+              },
+              {
+                "name": "PERT and CPM",
+                "description": "Scheduling techniques.",
+                "details": "Used to determine critical path and optimize project duration."
+              }
+            ]
+          }
         ]
       }
     ]
@@ -76,58 +95,67 @@
     "semester": 5,
     "courseCode": "315321",
     "subjectName": "Advanced Computer Network",
-    "topics": [
+    "description": "Covers advanced networking concepts such as routing, IP addressing, transport protocols, and wireless communication.",
+    "chapters": [
       {
-        "topicName": "Internet Architecture",
-        "subtopics": [
-          "Internet structure",
-          "ISP architecture",
-          "IPv4 addressing",
-          "IPv6 addressing",
-          "Subnetting",
-          "Supernetting"
+        "chapterName": "Internet Architecture",
+        "description": "Explains how the internet is structured and operates.",
+        "topics": [
+          {
+            "topicName": "IP Addressing",
+            "description": "Method to uniquely identify devices on a network.",
+            "subtopics": [
+              {
+                "name": "IPv4",
+                "description": "32-bit addressing scheme.",
+                "details": "Uses dotted decimal format and supports limited address space."
+              },
+              {
+                "name": "IPv6",
+                "description": "128-bit addressing scheme.",
+                "details": "Provides a larger address space and improved routing efficiency."
+              }
+            ]
+          },
+          {
+            "topicName": "Subnetting",
+            "description": "Dividing networks into smaller segments.",
+            "subtopics": [
+              {
+                "name": "Subnet Masking",
+                "description": "Used for network division.",
+                "details": "Improves network performance and security by organizing IP addresses into sub-networks."
+              }
+            ]
+          }
         ]
       },
       {
-        "topicName": "Routing Protocols",
-        "subtopics": [
-          "Routing algorithms",
-          "Distance vector routing",
-          "RIP protocol",
-          "Link state routing",
-          "OSPF protocol",
-          "BGP routing"
-        ]
-      },
-      {
-        "topicName": "Transport Layer",
-        "subtopics": [
-          "UDP protocol",
-          "TCP protocol",
-          "TCP handshake",
-          "Congestion control",
-          "TLS protocol"
-        ]
-      },
-      {
-        "topicName": "Application Layer Protocols",
-        "subtopics": [
-          "DNS protocol",
-          "SMTP protocol",
-          "POP protocol",
-          "IMAP protocol",
-          "FTP protocol",
-          "HTTP protocol"
-        ]
-      },
-      {
-        "topicName": "Wireless Networking",
-        "subtopics": [
-          "3G network",
-          "4G network",
-          "5G network",
-          "Software defined networking",
-          "Edge computing"
+        "chapterName": "Routing Protocols",
+        "description": "Protocols used to determine best path for data transfer.",
+        "topics": [
+          {
+            "topicName": "Distance Vector Routing",
+            "description": "Routing based on distance metrics.",
+            "subtopics": [
+              {
+                "name": "RIP",
+                "description": "Routing Information Protocol.",
+                "details": "Uses hop count to determine best path and updates routing tables periodically."
+              }
+            ]
+          },
+          {
+            "topicName": "Link State Routing",
+            "description": "Routing based on network topology.",
+            "subtopics": [
+              {
+                "name": "OSPF",
+                "description": "Open Shortest Path First.",
+                "details": "Uses Dijkstra algorithm to calculate shortest path and maintains full topology map."
+              }
+            ]
+          }
         ]
       }
     ]
@@ -137,56 +165,45 @@
     "semester": 5,
     "courseCode": "315319",
     "subjectName": "Operating System",
-    "topics": [
+    "description": "Focuses on managing system resources such as CPU, memory, and processes.",
+    "chapters": [
       {
-        "topicName": "Operating System Basics",
-        "subtopics": [
-          "Operating system functions",
-          "Batch operating system",
-          "Time sharing system",
-          "Distributed system",
-          "Real time operating system"
+        "chapterName": "Process Management",
+        "description": "Handling processes in operating systems.",
+        "topics": [
+          {
+            "topicName": "Process Lifecycle",
+            "description": "States through which a process passes.",
+            "subtopics": [
+              {
+                "name": "Process States",
+                "description": "Execution states.",
+                "details": "Includes new, ready, running, waiting, and terminated states."
+              }
+            ]
+          }
         ]
       },
       {
-        "topicName": "Process Management",
-        "subtopics": [
-          "Process states",
-          "Process control block",
-          "Context switching",
-          "Inter process communication",
-          "Threads"
-        ]
-      },
-      {
-        "topicName": "CPU Scheduling",
-        "subtopics": [
-          "FCFS scheduling",
-          "Shortest job first",
-          "Shortest remaining time",
-          "Round robin scheduling",
-          "Priority scheduling"
-        ]
-      },
-      {
-        "topicName": "Memory Management",
-        "subtopics": [
-          "Paging",
-          "Segmentation",
-          "Virtual memory",
-          "Page replacement algorithms",
-          "FIFO",
-          "LRU"
-        ]
-      },
-      {
-        "topicName": "File Management",
-        "subtopics": [
-          "File attributes",
-          "File operations",
-          "Sequential access",
-          "Direct access",
-          "Directory structures"
+        "chapterName": "CPU Scheduling",
+        "description": "Allocating CPU to processes.",
+        "topics": [
+          {
+            "topicName": "Scheduling Algorithms",
+            "description": "Different CPU scheduling techniques.",
+            "subtopics": [
+              {
+                "name": "FCFS",
+                "description": "First Come First Serve.",
+                "details": "Processes are executed in order of arrival."
+              },
+              {
+                "name": "Round Robin",
+                "description": "Time-sharing scheduling.",
+                "details": "Each process gets equal CPU time in cyclic order."
+              }
+            ]
+          }
         ]
       }
     ]
@@ -196,40 +213,28 @@
     "semester": 5,
     "courseCode": "315327",
     "subjectName": "Entrepreneurship Development",
-    "topics": [
+    "description": "Focuses on startup development, business planning, and entrepreneurial skills.",
+    "chapters": [
       {
-        "topicName": "Entrepreneurship Basics",
-        "subtopics": [
-          "Concept of entrepreneurship",
-          "Characteristics of entrepreneur",
-          "Role of entrepreneur",
-          "Entrepreneurship ecosystem"
-        ]
-      },
-      {
-        "topicName": "Startup Planning",
-        "subtopics": [
-          "Idea generation",
-          "Opportunity identification",
-          "Market research",
-          "Business planning"
-        ]
-      },
-      {
-        "topicName": "Startup Support Systems",
-        "subtopics": [
-          "Government startup schemes",
-          "Startup India",
-          "MSME support",
-          "Financial assistance"
-        ]
-      },
-      {
-        "topicName": "Enterprise Management",
-        "subtopics": [
-          "Business risk management",
-          "Business communication",
-          "Marketing strategies"
+        "chapterName": "Entrepreneurship Basics",
+        "description": "Understanding entrepreneurship and its importance.",
+        "topics": [
+          {
+            "topicName": "Entrepreneur Traits",
+            "description": "Qualities required for entrepreneurship.",
+            "subtopics": [
+              {
+                "name": "Leadership",
+                "description": "Guiding teams.",
+                "details": "Helps in decision making and managing business operations."
+              },
+              {
+                "name": "Risk Taking",
+                "description": "Handling uncertainty.",
+                "details": "Entrepreneurs must take calculated risks to achieve success."
+              }
+            ]
+          }
         ]
       }
     ]
@@ -239,31 +244,23 @@
     "semester": 5,
     "courseCode": "315328",
     "subjectName": "Seminar and Project Initiation",
-    "topics": [
+    "description": "Focuses on research, topic selection, and project planning.",
+    "chapters": [
       {
-        "topicName": "Research and Seminar Preparation",
-        "subtopics": [
-          "Topic selection",
-          "Literature review",
-          "Research methodology",
-          "Technical paper writing"
-        ]
-      },
-      {
-        "topicName": "Project Planning",
-        "subtopics": [
-          "Problem identification",
-          "Project scope",
-          "Project objectives",
-          "Feasibility analysis"
-        ]
-      },
-      {
-        "topicName": "Presentation Skills",
-        "subtopics": [
-          "Technical presentation",
-          "Report writing",
-          "Documentation standards"
+        "chapterName": "Research Methodology",
+        "description": "Steps involved in research process.",
+        "topics": [
+          {
+            "topicName": "Literature Review",
+            "description": "Study of existing work.",
+            "subtopics": [
+              {
+                "name": "Research Papers",
+                "description": "Understanding prior research.",
+                "details": "Helps identify research gaps and define project scope."
+              }
+            ]
+          }
         ]
       }
     ]
@@ -273,29 +270,23 @@
     "semester": 5,
     "courseCode": "315004",
     "subjectName": "Internship",
-    "topics": [
+    "description": "Provides real-world industrial exposure and practical experience.",
+    "chapters": [
       {
-        "topicName": "Industrial Exposure",
-        "subtopics": [
-          "Industry orientation",
-          "Industrial safety",
-          "Workplace environment"
-        ]
-      },
-      {
-        "topicName": "Practical Training",
-        "subtopics": [
-          "Project participation",
-          "Team collaboration",
-          "Industrial tools usage"
-        ]
-      },
-      {
-        "topicName": "Internship Report",
-        "subtopics": [
-          "Daily diary maintenance",
-          "Training report preparation",
-          "Final presentation"
+        "chapterName": "Industrial Training",
+        "description": "Working in professional environment.",
+        "topics": [
+          {
+            "topicName": "Workplace Practices",
+            "description": "Understanding professional work culture.",
+            "subtopics": [
+              {
+                "name": "Team Collaboration",
+                "description": "Working with teams.",
+                "details": "Improves communication, coordination, and real-world problem-solving skills."
+              }
+            ]
+          }
         ]
       }
     ]
@@ -305,34 +296,72 @@
     "semester": 6,
     "courseCode": "315332",
     "subjectName": "Client Side Scripting",
-    "topics": [
+    "description": "Focuses on building interactive web applications using JavaScript and modern frontend frameworks like React.",
+    "chapters": [
       {
-        "topicName": "JavaScript Basics",
-        "subtopics": [
-          "Variables",
-          "Functions",
-          "Objects",
-          "Events",
-          "DOM manipulation"
+        "chapterName": "JavaScript Fundamentals",
+        "description": "Covers basic programming concepts using JavaScript.",
+        "topics": [
+          {
+            "topicName": "Core JavaScript Concepts",
+            "description": "Basic building blocks of JavaScript programming.",
+            "subtopics": [
+              {
+                "name": "Variables and Data Types",
+                "description": "Storing and managing data.",
+                "details": "JavaScript supports data types such as number, string, boolean, object, and arrays. Variables are declared using var, let, and const."
+              },
+              {
+                "name": "Functions",
+                "description": "Reusable blocks of code.",
+                "details": "Functions allow modular programming. They can take inputs, process logic, and return outputs."
+              }
+            ]
+          },
+          {
+            "topicName": "DOM Manipulation",
+            "description": "Interacting with HTML elements dynamically.",
+            "subtopics": [
+              {
+                "name": "Document Object Model",
+                "description": "Represents HTML structure as objects.",
+                "details": "JavaScript can access and modify HTML elements using DOM methods like getElementById and querySelector."
+              },
+              {
+                "name": "Event Handling",
+                "description": "Handling user interactions.",
+                "details": "Events like click, submit, and keypress trigger JavaScript functions to make pages interactive."
+              }
+            ]
+          }
         ]
       },
       {
-        "topicName": "React Framework",
-        "subtopics": [
-          "React components",
-          "JSX",
-          "Props and state",
-          "React hooks",
-          "React lifecycle"
-        ]
-      },
-      {
-        "topicName": "Frontend Development",
-        "subtopics": [
-          "Forms",
-          "API calls",
-          "Single page applications",
-          "Frontend routing"
+        "chapterName": "React Framework",
+        "description": "Modern JavaScript library for building UI components.",
+        "topics": [
+          {
+            "topicName": "React Components",
+            "description": "Reusable UI building blocks.",
+            "subtopics": [
+              {
+                "name": "Functional Components",
+                "description": "Components written as functions.",
+                "details": "They use hooks such as useState and useEffect to manage state and lifecycle."
+              }
+            ]
+          },
+          {
+            "topicName": "State and Props",
+            "description": "Managing data in React.",
+            "subtopics": [
+              {
+                "name": "useState Hook",
+                "description": "Managing local state.",
+                "details": "Allows components to store and update data dynamically."
+              }
+            ]
+          }
         ]
       }
     ]
@@ -342,30 +371,51 @@
     "semester": 6,
     "courseCode": "315333",
     "subjectName": "Mobile Application Development",
-    "topics": [
+    "description": "Focuses on developing mobile applications using Android platform and modern development tools.",
+    "chapters": [
       {
-        "topicName": "Android Basics",
-        "subtopics": [
-          "Android architecture",
-          "Activities",
-          "Layouts",
-          "Intents"
+        "chapterName": "Android Basics",
+        "description": "Introduction to Android application development.",
+        "topics": [
+          {
+            "topicName": "Android Architecture",
+            "description": "Structure of Android OS.",
+            "subtopics": [
+              {
+                "name": "Android Components",
+                "description": "Core building blocks.",
+                "details": "Includes activities, services, broadcast receivers, and content providers."
+              }
+            ]
+          },
+          {
+            "topicName": "Activities and Intents",
+            "description": "Application navigation and interaction.",
+            "subtopics": [
+              {
+                "name": "Activity Lifecycle",
+                "description": "Different states of activity.",
+                "details": "Includes onCreate, onStart, onResume, onPause, onStop, and onDestroy."
+              }
+            ]
+          }
         ]
       },
       {
-        "topicName": "User Interface Design",
-        "subtopics": [
-          "XML layouts",
-          "UI components",
-          "Navigation"
-        ]
-      },
-      {
-        "topicName": "Database Integration",
-        "subtopics": [
-          "SQLite database",
-          "Firebase database",
-          "Data storage"
+        "chapterName": "User Interface Design",
+        "description": "Designing mobile application interfaces.",
+        "topics": [
+          {
+            "topicName": "Layouts",
+            "description": "UI arrangement in Android.",
+            "subtopics": [
+              {
+                "name": "XML Layouts",
+                "description": "Designing UI using XML.",
+                "details": "Defines structure of user interface including buttons, text views, and layouts."
+              }
+            ]
+          }
         ]
       }
     ]
@@ -375,30 +425,45 @@
     "semester": 6,
     "courseCode": "315334",
     "subjectName": "Software Testing",
-    "topics": [
+    "description": "Covers methods and techniques used to verify and validate software systems.",
+    "chapters": [
       {
-        "topicName": "Testing Fundamentals",
-        "subtopics": [
-          "Software testing principles",
-          "Verification and validation",
-          "Testing life cycle"
+        "chapterName": "Testing Fundamentals",
+        "description": "Basic principles of testing.",
+        "topics": [
+          {
+            "topicName": "Verification and Validation",
+            "description": "Ensuring correctness of software.",
+            "subtopics": [
+              {
+                "name": "Verification",
+                "description": "Checking product correctness.",
+                "details": "Ensures software is built correctly according to design specifications."
+              },
+              {
+                "name": "Validation",
+                "description": "Checking product usability.",
+                "details": "Ensures the final product meets user requirements."
+              }
+            ]
+          }
         ]
       },
       {
-        "topicName": "Testing Techniques",
-        "subtopics": [
-          "Black box testing",
-          "White box testing",
-          "Boundary value analysis",
-          "Equivalence partitioning"
-        ]
-      },
-      {
-        "topicName": "Automation Testing",
-        "subtopics": [
-          "Selenium testing",
-          "Test case design",
-          "Defect tracking"
+        "chapterName": "Testing Techniques",
+        "description": "Different testing approaches.",
+        "topics": [
+          {
+            "topicName": "Black Box Testing",
+            "description": "Testing without internal knowledge.",
+            "subtopics": [
+              {
+                "name": "Boundary Value Analysis",
+                "description": "Testing edge values.",
+                "details": "Focuses on input boundaries where errors are most likely."
+              }
+            ]
+          }
         ]
       }
     ]
@@ -408,30 +473,40 @@
     "semester": 6,
     "courseCode": "315335",
     "subjectName": "Digital Forensics and Hacking Techniques",
-    "topics": [
+    "description": "Focuses on cybersecurity, ethical hacking, and digital investigation techniques.",
+    "chapters": [
       {
-        "topicName": "Cyber Security Basics",
-        "subtopics": [
-          "Cyber crime",
-          "Security threats",
-          "Attack vectors"
+        "chapterName": "Cyber Security Basics",
+        "description": "Introduction to security concepts.",
+        "topics": [
+          {
+            "topicName": "Cyber Threats",
+            "description": "Different types of attacks.",
+            "subtopics": [
+              {
+                "name": "Malware",
+                "description": "Malicious software.",
+                "details": "Includes viruses, worms, and trojans that damage or exploit systems."
+              }
+            ]
+          }
         ]
       },
       {
-        "topicName": "Ethical Hacking",
-        "subtopics": [
-          "Footprinting",
-          "Scanning",
-          "Enumeration",
-          "Vulnerability analysis"
-        ]
-      },
-      {
-        "topicName": "Digital Forensics",
-        "subtopics": [
-          "Evidence collection",
-          "Chain of custody",
-          "Forensic investigation"
+        "chapterName": "Ethical Hacking",
+        "description": "Identifying system vulnerabilities.",
+        "topics": [
+          {
+            "topicName": "Footprinting",
+            "description": "Gathering information about target.",
+            "subtopics": [
+              {
+                "name": "Reconnaissance",
+                "description": "Information gathering phase.",
+                "details": "Used to collect data about target systems before attack."
+              }
+            ]
+          }
         ]
       }
     ]
@@ -441,31 +516,28 @@
     "semester": 6,
     "courseCode": "315336",
     "subjectName": "Management",
-    "topics": [
+    "description": "Focuses on principles of management, team handling, and project execution.",
+    "chapters": [
       {
-        "topicName": "Management Basics",
-        "subtopics": [
-          "Principles of management",
-          "Planning",
-          "Organizing",
-          "Leading",
-          "Controlling"
-        ]
-      },
-      {
-        "topicName": "Project Management",
-        "subtopics": [
-          "Project planning",
-          "Team management",
-          "Risk management"
-        ]
-      },
-      {
-        "topicName": "Organizational Behavior",
-        "subtopics": [
-          "Motivation",
-          "Leadership",
-          "Communication"
+        "chapterName": "Management Basics",
+        "description": "Core functions of management.",
+        "topics": [
+          {
+            "topicName": "Management Functions",
+            "description": "Core management activities.",
+            "subtopics": [
+              {
+                "name": "Planning",
+                "description": "Setting goals.",
+                "details": "Defines objectives and strategies to achieve them."
+              },
+              {
+                "name": "Organizing",
+                "description": "Structuring resources.",
+                "details": "Allocates tasks and resources efficiently."
+              }
+            ]
+          }
         ]
       }
     ]
@@ -475,30 +547,45 @@
     "semester": 6,
     "courseCode": "315004",
     "subjectName": "Capstone Project",
-    "topics": [
+    "description": "Final project integrating knowledge from all subjects to build a complete system.",
+    "chapters": [
       {
-        "topicName": "Project Development",
-        "subtopics": [
-          "System design",
-          "Implementation",
-          "Integration",
-          "Deployment"
+        "chapterName": "Project Development",
+        "description": "Building the system.",
+        "topics": [
+          {
+            "topicName": "Implementation",
+            "description": "Developing system modules.",
+            "subtopics": [
+              {
+                "name": "Frontend Development",
+                "description": "User interface creation.",
+                "details": "Includes building UI using frameworks like React."
+              },
+              {
+                "name": "Backend Development",
+                "description": "Server-side logic.",
+                "details": "Handles APIs, database, and business logic."
+              }
+            ]
+          }
         ]
       },
       {
-        "topicName": "Project Evaluation",
-        "subtopics": [
-          "Testing",
-          "Performance evaluation",
-          "Documentation"
-        ]
-      },
-      {
-        "topicName": "Project Presentation",
-        "subtopics": [
-          "Final report",
-          "Viva presentation",
-          "Project demonstration"
+        "chapterName": "Project Evaluation",
+        "description": "Testing and validation of system.",
+        "topics": [
+          {
+            "topicName": "Testing",
+            "description": "Ensuring system quality.",
+            "subtopics": [
+              {
+                "name": "Unit Testing",
+                "description": "Testing individual modules.",
+                "details": "Each component is tested independently."
+              }
+            ]
+          }
         ]
       }
     ]
