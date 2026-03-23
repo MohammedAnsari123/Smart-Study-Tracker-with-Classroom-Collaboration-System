@@ -272,7 +272,7 @@ const CurriculumManagement = () => {
                 <div className="bg-gray-50 border-b border-gray-100 p-6 animate-in slide-in-from-top duration-300">
                     <div className="max-w-5xl mx-auto space-y-4">
                         <div className="flex flex-wrap gap-2">
-                            {departments.map(dept => (
+                            {departments?.map(dept => (
                                 <div key={dept._id} className="inline-flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-700 hover:border-red-200 group">
                                     <span className="text-red-600">{dept.name}</span> <span className="opacity-60">{dept.fullName}</span>
                                     <button onClick={() => handleDeleteDepartment(dept._id)} className="ml-1 opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 transition-opacity"><X className="w-3 h-3" /></button>

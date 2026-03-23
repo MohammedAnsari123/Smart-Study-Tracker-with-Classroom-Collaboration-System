@@ -8,11 +8,6 @@ import {
     ListTree, 
     Users, 
     BookOpen, 
-    FileText, 
-    HelpCircle, 
-    BarChart3, 
-    History, 
-    Terminal,
     Settings,
     Bell
 } from 'lucide-react';
@@ -24,11 +19,7 @@ const AdminLayout = () => {
         { to: '/', icon: LayoutDashboard, label: 'Dashboard', end: true },
         { to: '/curriculum', icon: ListTree, label: 'Curriculum' },
         { to: '/materials', icon: BookOpen, label: 'Study Materials' },
-        { to: '/assignments', icon: FileText, label: 'Assignments' },
-        { to: '/quizzes', icon: HelpCircle, label: 'Quizzes' },
         { to: '/users', icon: Users, label: 'Students' },
-        { to: '/analytics', icon: BarChart3, label: 'Analytics' },
-        { to: '/logs', icon: History, label: 'System Logs' },
     ];
 
     return (
@@ -51,9 +42,7 @@ const AdminLayout = () => {
                                     : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
                             }`}
                         >
-                            <link.icon className={`w-5 h-5 mr-3 transition-colors ${
-                                link.to === '/logs' ? 'group-hover:text-red-500' : 'group-hover:text-red-600'
-                            }`} /> 
+                            <link.icon className="w-5 h-5 mr-3 transition-colors group-hover:text-red-600" /> 
                             {link.label}
                         </NavLink>
                     ))}

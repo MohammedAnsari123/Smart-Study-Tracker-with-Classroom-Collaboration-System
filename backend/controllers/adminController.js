@@ -92,13 +92,50 @@ const getSystemStats = async (req, res) => {
         const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
         const activeToday = await User.countDocuments({ lastLogin: { $gte: dayAgo } });
 
+        // --- Real-time Analytics for Charts ---
+        
+        // 1. Enrollment Trend (Last 7 Days)
+        const enrollmentTrend = [];
+        for (let i = 6; i >= 0; i--) {
+            const start = new Date();
+            start.setHours(0, 0, 0, 0);
+            start.setDate(start.getDate() - i);
+            
+            const end = new Date(start);
+            end.setDate(end.getDate() + 1);
+            
+            const count = await User.countDocuments({ 
+                createdAt: { $gte: start, $lt: end },
+                role: 'student'
+            });
+            
+            enrollmentTrend.push({
+                name: start.toLocaleDateString('en-US', { weekday: 'short' }),
+                students: count
+            });
+        }
+
+        // 2. Subject Distribution per Department
+        const depts = [...new Set(subjects.map(s => s.department))];
+        const subjectDistribution = depts.map(dept => {
+            const count = subjects.filter(s => s.department === dept).length;
+            const colors = ['#EF4444', '#F97316', '#F43F5E', '#DC2626', '#B91C1C'];
+            return {
+                name: dept,
+                count: Math.round((count / subjects.length) * 100),
+                color: colors[depts.indexOf(dept) % colors.length]
+            };
+        });
+
         res.json({
             totalUsers,
             totalClassrooms,
             totalSubjects: subjects.length,
             totalTopics,
             totalAssignments,
-            activeToday
+            activeToday,
+            enrollmentTrend,
+            subjectDistribution
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -131,18 +168,7 @@ const deleteUser = async (req, res) => {
     }
 };
 
-const getSystemLogs = async (req, res) => {
-    try {
-        const SystemLog = require('../models/SystemLog');
-        const logs = await SystemLog.find({})
-            .populate('adminId', 'name email')
-            .sort({ createdAt: -1 })
-            .limit(100);
-        res.json(logs);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+
 
 // @desc    Get detailed student performance analytics
 // @route   GET /api/admin/performance
@@ -228,7 +254,6 @@ module.exports = {
     getSystemStats,
     getAllUsers,
     deleteUser,
-    getSystemLogs,
     getStudentPerformance,
     getAllClassrooms
 };

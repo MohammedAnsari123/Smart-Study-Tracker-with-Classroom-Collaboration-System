@@ -84,7 +84,6 @@ const getUserAIContext = async (req, res) => {
         const Assignment = require('../models/Assignment');
         const Flashcard = require('../models/Flashcard');
         const Progress = require('../models/Progress');
-        const Quiz = require('../models/Quiz');
         const StudySession = require('../models/StudySession');
         const Submission = require('../models/Submission');
         const ClassMember = require('../models/ClassMember');
@@ -128,8 +127,6 @@ const getUserAIContext = async (req, res) => {
         const studySessions = await StudySession.find({ userId, sessionDate: { $gte: sixMonthsAgo } }).select('subject topic durationMinutes testScore sessionDate').lean();
         const flashcards = await Flashcard.find({ userId, createdAt: { $gte: sixMonthsAgo } }).select('question subjectId').lean();
         const submissions = await Submission.find({ userId, submittedAt: { $gte: sixMonthsAgo } }).populate('assignmentId', 'title').lean();
-        
-        const quizzes = await Quiz.find({ createdAt: { $gte: sixMonthsAgo } }).select('title subject duration timeLimit').lean();
 
         // 4. Construct the Compact Prompt String
         let contextString = `--- 🧠 AI ASSISTANT ACADEMIC PROFILE (Last 6 Months) ---\n\n`;
@@ -146,11 +143,11 @@ const getUserAIContext = async (req, res) => {
             contextString += `📊 ASSIGNMENT PROGRESS: No active assignment progress tracked yet.\n\n`;
         }
 
-        contextString += `📖 RECENT STUDY SESSIONS:\n${studySessions.slice(-15).map(s => `- ${s.subject}: ${s.topic} (${s.durationMinutes}m) [Test Score: ${s.testScore || 'N/A'}]`).join('\n') || 'No recent sessions.'}\n\n`;
+        contextString += `🏆 COMPLETED TESTS & SESSIONS (Self-Study):\n${studySessions.slice(-15).map(s => `- Subject: ${s.subject}, Topic: ${s.topic}\n  - Duration: ${s.durationMinutes}m\n  - TEST SCORE: ${s.testScore !== undefined ? s.testScore + '%' : 'No Test Taken'}`).join('\n') || 'No recent study sessions or tests.'}\n\n`;
+
+        contextString += `🗂️ ACTIVE FLASHCARDS:\n${flashcards.slice(-20).map(f => `- Q: ${f.question ? f.question.substring(0,60) : ''}`).join('\n') || 'No flashcards generated yet.'}\n\n`;
         
-        contextString += `🗂️ ACTIVE FLASHCARDS:\n${flashcards.slice(-20).map(f => `- Q: ${f.question ? f.question.substring(0,50) : ''}`).join('\n') || 'No flashcards generated yet.'}\n\n`;
-        
-        contextString += `✅ USER SUBMISSIONS:\n${submissions.map(s => `- ${s.assignmentId?.title || 'Unknown'} (Marks: ${s.marks !== null ? s.marks : 'Pending Review'})`).join('\n') || 'No submissions found in last 6 months.'}\n`;
+        contextString += `✅ ASSIGNMENT SUBMISSIONS & GRADES:\n${submissions.map(s => `- ${s.assignmentId?.title || 'Unknown'} -> GRADE: ${s.marks !== null ? s.marks : 'Pending Review'}`).join('\n') || 'No assignment grades found.'}\n`;
 
         res.json({ contextPayload: contextString });
     } catch (error) {

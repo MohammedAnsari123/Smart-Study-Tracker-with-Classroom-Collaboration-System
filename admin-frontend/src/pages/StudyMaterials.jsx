@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import axios from 'axios';
 import { AdminAuthContext } from '../context/AdminAuthContext';
 import { BookOpen, Plus, Trash2, GraduationCap, Link as LinkIcon, FileText, Video, Globe } from 'lucide-react';
@@ -18,6 +18,23 @@ const StudyMaterials = () => {
     const [newType, setNewType] = useState('pdf');
     const [newUrl, setNewUrl] = useState('');
     const [newTopic, setNewTopic] = useState('');
+    
+    // Safely flatten topics from all chapters for the dropdown
+    const availableTopics = useMemo(() => {
+        if (!activeSubject || !activeSubject.chapters) return [];
+        const flattened = [];
+        activeSubject.chapters.forEach(chapter => {
+            if (chapter.topics && Array.isArray(chapter.topics)) {
+                chapter.topics.forEach(topic => {
+                    // Avoid duplicates if same topic name exists in multiple chapters (optional)
+                    if (!flattened.find(t => t.topicName === topic.topicName)) {
+                        flattened.push(topic);
+                    }
+                });
+            }
+        });
+        return flattened;
+    }, [activeSubject]);
 
     const token = localStorage.getItem('adminToken');
     const headers = { Authorization: `Bearer ${token}` };
@@ -106,7 +123,7 @@ const StudyMaterials = () => {
                     <div className="text-[9px] font-bold bg-red-100 text-red-600 px-2 py-0.5 rounded-full">{subjects.length}</div>
                 </div>
                 <div className="flex-1 overflow-y-auto px-2 py-3 space-y-1 custom-scrollbar">
-                    {subjects.map(subject => (
+                    {subjects?.map(subject => (
                         <button key={subject._id} onClick={() => setActiveSubject(subject)}
                             className={`w-full text-left p-3 rounded-xl transition-all flex items-start gap-3 border ${
                                 activeSubject?._id === subject._id 
@@ -158,7 +175,7 @@ const StudyMaterials = () => {
                                             <select value={newTopic} onChange={(e) => setNewTopic(e.target.value)} required
                                                 className="w-full bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-xs font-bold outline-none focus:ring-1 focus:ring-red-500">
                                                 <option value="">Select Topic</option>
-                                                {activeSubject.topics.map(t => <option key={t._id} value={t.topicName}>{t.topicName}</option>)}
+                                                {availableTopics.map(t => <option key={t._id} value={t.topicName}>{t.topicName}</option>)}
                                             </select>
                                         </div>
                                         <div className="space-y-1">
@@ -192,7 +209,7 @@ const StudyMaterials = () => {
 
                         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {materials.map(material => (
+                                {materials?.map(material => (
                                     <div key={material._id} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group relative">
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="p-3 bg-red-50 text-red-600 rounded-xl">
