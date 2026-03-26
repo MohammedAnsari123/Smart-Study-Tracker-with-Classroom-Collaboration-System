@@ -25,6 +25,7 @@ app.use('/chat', require('./routes/chat'));
 app.use('/departments', require('./routes/department'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/notifications', require('./routes/notifications'));
+app.use('/api/materials', require('./routes/studentMaterialRoutes'));
 
 
 // Error Handling Middleware

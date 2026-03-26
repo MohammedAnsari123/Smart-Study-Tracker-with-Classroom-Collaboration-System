@@ -12,6 +12,7 @@ import ChatbotView from './pages/ChatbotView';
 import Flashcards from './pages/Flashcards';
 import TestResults from './pages/TestResults';
 import TestHistory from './pages/TestHistory';
+import StudyMaterials from './pages/StudyMaterials';
 
 
 const PrivateRoute = ({ children }) => {
@@ -35,6 +36,7 @@ function App() {
           <Route path="/classrooms" element={<PrivateRoute><Classrooms /></PrivateRoute>} />
           <Route path="/flashcards" element={<PrivateRoute><Flashcards /></PrivateRoute>} />
           <Route path="/chatbot" element={<PrivateRoute><ChatbotView /></PrivateRoute>} />
+          <Route path="/study-materials" element={<PrivateRoute><StudyMaterials /></PrivateRoute>} />
 
           <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
           <Route path="/class/:id" element={<PrivateRoute><ClassroomView /></PrivateRoute>} />
