@@ -649,8 +649,25 @@ const studySessionSchema = new mongoose.Schema({
 # 11. Syllabus Data Architecture (NEP 2020 B.E. ECS)
 
 ## 11.1 Academic Hierarchy
-The curriculum is organized strictly as follows:
-$$\text{University} \longrightarrow \text{Program (BE-ECS)} \longrightarrow \text{Semester (3 or 4)} \longrightarrow \text{Course (Code \& Metadata)} \longrightarrow \text{Module} \longrightarrow \text{Topic} \longrightarrow \text{Subtopic}$$
+```text
+University (Mumbai University)
+  └── Program (B.E. Electronics & Computer Science - NEP 2020)
+        └── Semester (Semester III / IV)
+              └── Course (e.g. 2283114 Data Structures & Algorithms)
+                    └── Module / Chapter (e.g. Module 1: Introduction)
+                          └── Topic (e.g. Asymptotic Notations)
+                                └── Subtopic (e.g. Big-O, Omega, Theta Analysis)
+```
+
+```mermaid
+graph LR
+    Univ["University (Mumbai Univ)"] --> Prog["Program (BE-ECS)"]
+    Prog --> Sem["Semester (III / IV)"]
+    Sem --> Crs["Course (Code & Meta)"]
+    Crs --> Mod["Module / Chapter"]
+    Mod --> Top["Topic"]
+    Top --> Sub["Subtopic"]
+```
 
 ## 11.2 Master Course Catalogue (Semesters III & IV)
 
