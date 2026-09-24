@@ -73,11 +73,26 @@ const getClassroomDetails = async (req, res) => {
 
 const deleteClassroom = async (req, res) => {
     try {
-        await req.classroom.remove(); // req.classroom set by ownerMiddleware
-        // Also remove memberships associated
-        await ClassMember.deleteMany({ classId: req.classroom._id });
+        const classId = req.classroom._id;
+        await req.classroom.deleteOne();
+        // Also remove memberships, assignments, announcements, and progress associated
+        const Assignment = require('../models/Assignment');
+        const Announcement = require('../models/Announcement');
+        const Progress = require('../models/Progress');
+        const Submission = require('../models/Submission');
 
-        res.json({ message: 'Classroom deleted successfully' });
+        const classAssignments = await Assignment.find({ classId }).select('_id');
+        const assignIds = classAssignments.map(a => a._id);
+
+        await Promise.all([
+            ClassMember.deleteMany({ classId }),
+            Assignment.deleteMany({ classId }),
+            Announcement.deleteMany({ classId }),
+            Progress.deleteMany({ classId }),
+            Submission.deleteMany({ assignmentId: { $in: assignIds } })
+        ]);
+
+        res.json({ message: 'Classroom and associated materials deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

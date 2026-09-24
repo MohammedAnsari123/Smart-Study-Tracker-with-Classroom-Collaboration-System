@@ -240,7 +240,7 @@ const CurriculumManagement = () => {
 
     if (loading) return <div className="text-center py-10">Loading...</div>;
 
-    const hasUnsavedChanges = draftCurriculum && JSON.stringify(draftCurriculum) !== JSON.stringify({ description: activeSubject.description || '', chapters: activeSubject.chapters || [] });
+    const hasUnsavedChanges = Boolean(activeSubject && draftCurriculum && JSON.stringify(draftCurriculum) !== JSON.stringify({ description: activeSubject.description || '', chapters: activeSubject.chapters || [] }));
 
     return (
         <div className="flex-1 flex flex-col min-h-0 bg-white">

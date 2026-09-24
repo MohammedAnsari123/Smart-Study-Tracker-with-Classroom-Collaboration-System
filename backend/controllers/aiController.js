@@ -107,8 +107,8 @@ const getUserAIContext = async (req, res) => {
         const activeDepartments = `🏢 DEPARTMENTS: ${departments.map(d => d.name).join(', ')}\n`;
 
         // 2. Fetch User-Specific Classes to get relevant Announcements & Assignments
-        const memberships = await ClassMember.find({ user: userId }).select('classroom').lean();
-        const classroomIds = memberships.map(m => m.classroom);
+        const memberships = await ClassMember.find({ userId: userId, membershipStatus: 'active' }).select('classId').lean();
+        const classroomIds = memberships.map(m => m.classId);
 
         // Correct field: classId
         const announcements = await Announcement.find({ 

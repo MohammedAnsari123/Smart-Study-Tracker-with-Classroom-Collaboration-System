@@ -94,8 +94,8 @@ const generateAIFlashcards = async (req, res) => {
 
         console.log(`Generating flashcards for Subject: ${subject.subjectName} using detailed curriculum context.`);
 
-        // Call Python AI Service
-        const aiResponse = await axios.post('http://127.0.0.1:8000/api/generate-flashcards', {
+        const pyAIUrl = process.env.AI_SERVICE_URL || 'http://127.0.0.1:8000/api';
+        const aiResponse = await axios.post(`${pyAIUrl}/generate-flashcards`, {
             subject: subject.subjectName,
             topics: topics,
             syllabus_context: syllabusContext

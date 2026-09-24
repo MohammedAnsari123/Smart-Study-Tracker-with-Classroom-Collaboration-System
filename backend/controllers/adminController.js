@@ -86,7 +86,11 @@ const getSystemStats = async (req, res) => {
             Assignment.countDocuments()
         ]);
 
-        const totalTopics = subjects.reduce((acc, sub) => acc + (sub.topics?.length || 0), 0);
+        const totalTopics = subjects.reduce((acc, sub) => {
+            const fromChapters = sub.chapters?.reduce((cAcc, chap) => cAcc + (chap.topics?.length || 0), 0) || 0;
+            const fromDirect = sub.topics?.length || 0;
+            return acc + (fromChapters || fromDirect);
+        }, 0);
         
         // Active today (last 24 hours)
         const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -105,8 +109,7 @@ const getSystemStats = async (req, res) => {
             end.setDate(end.getDate() + 1);
             
             const count = await User.countDocuments({ 
-                createdAt: { $gte: start, $lt: end },
-                role: 'student'
+                createdAt: { $gte: start, $lt: end }
             });
             
             enrollmentTrend.push({
@@ -122,7 +125,7 @@ const getSystemStats = async (req, res) => {
             const colors = ['#EF4444', '#F97316', '#F43F5E', '#DC2626', '#B91C1C'];
             return {
                 name: dept,
-                count: Math.round((count / subjects.length) * 100),
+                count: Math.round((count / (subjects.length || 1)) * 100),
                 color: colors[depts.indexOf(dept) % colors.length]
             };
         });
@@ -200,7 +203,7 @@ const getStudentPerformance = async (req, res) => {
         ]);
 
         // Merge and enrich with user data
-        const users = await User.find({ role: 'student' }).select('name email department semester');
+        const users = await User.find({}).select('fullName email department semester');
 
         const performanceData = users.map(user => {
             const tScore = testScores.find(s => s._id.toString() === user._id.toString());
@@ -218,7 +221,7 @@ const getStudentPerformance = async (req, res) => {
 
             return {
                 userId: user._id,
-                name: user.name,
+                name: user.fullName,
                 email: user.email,
                 department: user.department,
                 semester: user.semester,
@@ -240,7 +243,7 @@ const getStudentPerformance = async (req, res) => {
 const getAllClassrooms = async (req, res) => {
     try {
         const Classroom = require('../models/Classroom');
-        const classrooms = await Classroom.find({}).populate('ownerId', 'name email').sort({ createdAt: -1 });
+        const classrooms = await Classroom.find({}).populate('ownerId', 'fullName email').sort({ createdAt: -1 });
         res.json(classrooms);
     } catch (error) {
         res.status(500).json({ message: error.message });
