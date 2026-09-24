@@ -1,6 +1,8 @@
 import os
 import requests
 import json
+import re
+from utils.youtube_utils import get_youtube_transcript
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -34,11 +36,31 @@ class AIService:
 
         # Dynamically build system prompt with context if available
         current_system_prompt = self.system_prompt
-        if context:
+        
+        # Check for YouTube links in the user message
+        youtube_regex = r"(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})"
+        youtube_links = re.findall(youtube_regex, user_message)
+        
+        video_context = ""
+        if youtube_links:
+            print(f"Detected {len(youtube_links)} YouTube link(s). Fetching transcripts...")
+            for link_id in youtube_links:
+                # Reconstruct full URL for the utility
+                full_url = f"https://www.youtube.com/watch?v={link_id}"
+                transcript = get_youtube_transcript(full_url)
+                
+                if not transcript.startswith("Error"):
+                    video_context += f"\n\n=== VIDEO CONTENT (ID: {link_id}) ===\n{transcript}\n"
+                    print(f"Successfully fetched transcript for {link_id}")
+                else:
+                    print(f"Failed to fetch transcript: {transcript}")
+
+        if context or video_context:
+            combined_context = (context + "\n" + video_context).strip()
             current_system_prompt += (
-                f"\n\nPERSONAL ACADEMIC PROFILE & STUDY CONTEXT:\n{context}\n\n"
-                "Use the above profile/context (Curriculum, Flashcards, Sessions, Assignments) to answer accurately and personally. "
-                "If the user asks about their specific progress, flashcards, or study history, refer to this data."
+                f"\n\nPERSONAL ACADEMIC PROFILE & STUDY CONTEXT:\n{combined_context}\n\n"
+                "Use the above profile/context (Curriculum, Flashcards, Sessions, Assignments, or Video Transcripts) to answer accurately and personally. "
+                "If a VIDEO TRANSCRIPT is provided, prioritize it for video-specific questions. Inform the user you have analyzed the video content."
             )
 
 

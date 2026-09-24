@@ -4,3 +4,4 @@ requests
 python-dotenv
 flask-cors
 huggingface-hub
+youtube-transcript-api

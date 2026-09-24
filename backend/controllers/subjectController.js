@@ -3,16 +3,23 @@ const Subject = require('../models/Subject');
 // Create a subject (admin)
 const createSubject = async (req, res) => {
     try {
-        const { department, semester, courseCode, subjectName } = req.body;
+        const { department, semester, courseCode, subjectName, category, credits, hours, description, courseOutcomes, experiments, assessment, chapters } = req.body;
         if (!department || !semester || !courseCode || !subjectName) {
             return res.status(400).json({ message: 'department, semester, courseCode, and subjectName are required' });
         }
         const subject = await Subject.create({
             department: department.toUpperCase(),
-            semester,
+            semester: Number(semester),
             courseCode,
             subjectName,
-            topics: []
+            category: category || 'Program Core',
+            credits: credits || 3,
+            hours: hours || { theoryHours: 3, tutorialHours: 0, practicalHours: 0, totalHours: 0 },
+            description: description || '',
+            courseOutcomes: courseOutcomes || [],
+            experiments: experiments || [],
+            assessment: assessment || { internalAssessment1: 20, internalAssessment2: 20, endSemesterExam: 60, termWork: 0, oral: 0, total: 100 },
+            chapters: chapters || []
         });
         res.status(201).json(subject);
     } catch (error) {
@@ -36,10 +43,17 @@ const bulkImportSubjects = async (req, res) => {
             }
             const created = await Subject.create({
                 department: sub.department.toUpperCase(),
-                semester: sub.semester,
+                semester: Number(sub.semester),
                 courseCode: sub.courseCode,
                 subjectName: sub.subjectName,
-                topics: sub.topics || []
+                category: sub.category || 'Program Core',
+                credits: sub.credits || 3,
+                hours: sub.hours || { theoryHours: 3, tutorialHours: 0, practicalHours: 0, totalHours: 0 },
+                description: sub.description || '',
+                courseOutcomes: sub.courseOutcomes || [],
+                experiments: sub.experiments || [],
+                assessment: sub.assessment || { internalAssessment1: 20, internalAssessment2: 20, endSemesterExam: 60, termWork: 0, oral: 0, total: 100 },
+                chapters: sub.chapters || []
             });
             results.push(created);
         }

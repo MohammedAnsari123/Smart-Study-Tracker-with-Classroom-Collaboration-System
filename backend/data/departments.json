@@ -1,12 +1,7 @@
 [
   {
-    "name": "CO",
-    "fullName": "Computer Engineering",
-    "semesters": [1, 2, 3, 4, 5, 6]
-  },
-  {
-    "name": "IF",
-    "fullName": "Information Technology",
-    "semesters": [1, 2, 3, 4, 5, 6]
+    "name": "ECS",
+    "fullName": "Electronics and Computer Science",
+    "semesters": [1, 2, 3, 4, 5, 6, 7, 8]
   }
 ]
